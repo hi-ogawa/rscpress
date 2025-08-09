@@ -1,23 +1,23 @@
 /* Layout Variables */
 :root {
-  --vp-layout-max-width: 1440px;
-  --vp-nav-height: 64px;
-  --vp-sidebar-width: 272px;
-  --vp-z-index-nav: 30;
-  --vp-z-index-sidebar: 60;
-  --vp-nav-bg-color: var(--vp-c-bg);
-  --vp-sidebar-bg-color: var(--vp-c-bg-alt);
+	--vp-layout-max-width: 1440px;
+	--vp-nav-height: 64px;
+	--vp-sidebar-width: 272px;
+	--vp-z-index-nav: 30;
+	--vp-z-index-sidebar: 60;
+	--vp-nav-bg-color: var(--vp-c-bg);
+	--vp-sidebar-bg-color: var(--vp-c-bg-alt);
 }
 
 @media (min-width: 960px) {
-  :root {
-    --vp-z-index-sidebar: 25;
-  }
+	:root {
+		--vp-z-index-sidebar: 25;
+	}
 }
 
 /* Main Layout */
 .Layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 }

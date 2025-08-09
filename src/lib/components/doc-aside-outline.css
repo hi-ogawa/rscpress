@@ -1,73 +1,73 @@
 /* Table of Contents (Aside) */
 .aside {
-  position: relative;
-  display: none;
-  order: 2;
-  flex-grow: 1;
-  padding-left: 32px;
-  width: 100%;
-  max-width: 256px;
+	position: relative;
+	display: none;
+	order: 2;
+	flex-grow: 1;
+	padding-left: 32px;
+	width: 100%;
+	max-width: 256px;
 }
 
 @media (min-width: 1280px) {
-  .aside {
-    display: block;
-  }
+	.aside {
+		display: block;
+	}
 }
 
 .aside-container {
-  position: fixed;
-  top: 0;
-  padding-top: calc(var(--vp-nav-height) + 48px);
-  width: 224px;
-  height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
+	position: fixed;
+	top: 0;
+	padding-top: calc(var(--vp-nav-height) + 48px);
+	width: 224px;
+	height: 100vh;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 .aside-content {
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - (var(--vp-nav-height) + 48px));
-  padding-bottom: 32px;
+	display: flex;
+	flex-direction: column;
+	min-height: calc(100vh - (var(--vp-nav-height) + 48px));
+	padding-bottom: 32px;
 }
 
 .outline-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--vp-c-text-2);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 12px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--vp-c-text-2);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	margin-bottom: 12px;
 }
 
 .outline-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+	list-style: none;
+	padding: 0;
+	margin: 0;
 }
 
 .outline-item {
-  line-height: 28px;
+	line-height: 28px;
 }
 
 .outline-link {
-  display: block;
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--vp-c-text-2);
-  text-decoration: none;
-  transition: color 0.25s;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+	display: block;
+	font-size: 13px;
+	font-weight: 400;
+	color: var(--vp-c-text-2);
+	text-decoration: none;
+	transition: color 0.25s;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .outline-link:hover {
-  color: var(--vp-c-text-1);
+	color: var(--vp-c-text-1);
 }
 
 .outline-link.active {
-  color: var(--vp-c-brand-1);
-  font-weight: 600;
+	color: var(--vp-c-brand-1);
+	font-weight: 600;
 }
