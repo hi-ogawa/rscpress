@@ -1,7 +1,8 @@
 import type React from "react";
-import { NavBar } from "../components/navigation/nav-bar";
-import { Sidebar } from "../components/navigation/sidebar";
-import { TableOfContents } from "../components/content/table-of-contents";
+import { NavBar } from "../components/nav-bar";
+import { Sidebar } from "../components/sidebar";
+import { TableOfContents } from "../components/table-of-contents";
+import './doc-layout.css';
 
 export default function DocLayout(props: React.PropsWithChildren) {
 	return (

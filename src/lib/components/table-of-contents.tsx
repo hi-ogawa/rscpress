@@ -1,3 +1,5 @@
+import './table-of-contents.css';
+
 export function TableOfContents() {
 	return (
 		<div className="aside">

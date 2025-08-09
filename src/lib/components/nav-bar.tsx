@@ -1,3 +1,5 @@
+import './nav-bar.css';
+
 export function NavBar() {
 	return (
 		<header className="VPNavBar">
