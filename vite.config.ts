@@ -21,17 +21,52 @@ export default defineConfig({
 // https://github.com/mdx-js/mdx/blob/2b3381a8962dc888c0f2ed181cf80c6a1140b662/packages/rollup/lib/index.js
 import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-aware-processors";
 import { VFile } from "vfile";
+import remarkGfm from "remark-gfm";
+import remarkDirective from "remark-directive";
+import remarkFrontmatter from "remark-frontmatter";
+import { createHighlighterCore } from "shiki/core";
+import { createOnigurumaEngine } from "shiki/engine/oniguruma";
+import rehypeShikiFromHighlighter from "@shikijs/rehype/core";
 
 function mdxPlugin(): Plugin[] {
 	let processors: ReturnType<typeof createFormatAwareProcessors>;
+
 	return [
 		{
 			name: "rscpress:mdx",
+			async config() {
+				const highlighter = await createHighlighterCore({
+					themes: [
+						import("@shikijs/themes/vitesse-light"),
+						import("@shikijs/themes/vitesse-dark"),
+					],
+					langs: [
+						import("@shikijs/langs/json"),
+						import("@shikijs/langs/javascript"),
+						import("@shikijs/langs/shell"),
+					],
+					engine: createOnigurumaEngine(() => import("shiki/wasm")),
+				});
+				processors = createFormatAwareProcessors({
+					remarkPlugins: [remarkGfm, remarkDirective, remarkFrontmatter],
+					rehypePlugins: [
+						// https://shiki.style/packages/rehype
+						[
+							rehypeShikiFromHighlighter,
+							highlighter,
+							{
+								themes: {
+									light: "vitesse-light",
+									dark: "vitesse-dark",
+								},
+							},
+						],
+					],
+				});
+			},
 			async transform(code, id) {
 				const { filename, query } = parseIdQuery(id);
 				if (!("mdx" in query)) return;
-
-				processors ??= createFormatAwareProcessors({});
 				const file = new VFile({ path: filename, value: code });
 				const compiled = await processors.process(file);
 				const output = String(compiled.value);
