@@ -21,6 +21,12 @@ no md, mdx support yet. just write react component.
   - code block with syntax highlighting
   - snippet
 
-# step 3 (postponed)
+# step 3 (MVP)
 
-- configuration, plugin system, etc...
+- basic routing
+- ssg
+
+# step 4
+
+- configuration, plugin system
+- more comphrensive port
