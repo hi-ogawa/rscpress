@@ -1,8 +1,8 @@
 import "./styles/index.css";
 import { Layout } from "./layout";
-import Page from "../example/guide/getting-started.tsx";
+import Page from "../example/guide/getting-started.md?mdx";
 
-export function Root() {
+export async function Root() {
 	return (
 		<html lang="en">
 			<head>
