@@ -26,7 +26,7 @@ import remarkDirective from "remark-directive";
 import remarkFrontmatter from "remark-frontmatter";
 import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
-import rehypeShikiFromHighlighter from "@shikijs/rehype/core";
+import rehypeShikiFromHighlighter, { type RehypeShikiCoreOptions } from "@shikijs/rehype/core";
 
 function mdxPlugin(): Plugin[] {
 	let processors: ReturnType<typeof createFormatAwareProcessors>;
@@ -59,7 +59,8 @@ function mdxPlugin(): Plugin[] {
 									light: "vitesse-light",
 									dark: "vitesse-dark",
 								},
-							},
+								transformers: [],
+							} satisfies RehypeShikiCoreOptions,
 						],
 					],
 				});

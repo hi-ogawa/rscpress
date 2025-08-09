@@ -14,7 +14,7 @@ no md, mdx support yet. just write react component.
 # step 2 
 
 - setup mdx compiler to support mdx authoring
-- custom mdx transformation
+- custom mdx transformation https://vitepress.dev/guide/markdown
   - frontmatter
   - code-group
   - tip
