@@ -140,7 +140,34 @@ function remarkCustom() {
 
 			// TODO
 			// https://vitepress.dev/guide/markdown#github-flavored-alerts
-			GITHUB_ALERTS;
+			if (node.type === "blockquote") {
+				const first = node.children[0];
+				if (!first || first.type !== "paragraph") return;
+				let firstText = first.children[0];
+				if (!firstText || firstText.type !== "text") return;
+				const match = firstText.value.match(/^\[\!(\w+)\]/);
+				if (!match) return;
+				const alertType = match[1];
+				if (GITHUB_ALERTS.includes(alertType)) {
+					// add alert class
+					const data = node.data || (node.data = {});
+					const tagName = "div";
+					data.hName = tagName;
+					data.hProperties = h(tagName, {}).properties;
+					data.hProperties["class"] = `custom-block ${alertType}`;
+
+					// remove the first text node
+					// node.children.shift();
+					// // add a title
+					// const titleNode = {
+					// 	type: "element",
+					// 	tagName: "p",
+					// 	properties: { className: ["vp-alert-title"] },
+					// 	children: [{ type: "text", value: alertType }],
+					// };
+					// node.children.unshift(titleNode);
+				}
+			}
 		});
 	};
 }
