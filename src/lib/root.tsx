@@ -1,6 +1,6 @@
 import "./styles/index.css";
 import DocLayout from "./layout/doc-layout.tsx";
-import Page from "./example/guide/getting-started.tsx";
+import Page from "../example/guide/getting-started.tsx";
 
 export function Root() {
 	return (

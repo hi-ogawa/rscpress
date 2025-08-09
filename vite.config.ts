@@ -7,9 +7,9 @@ export default defineConfig({
 	plugins: [
 		rsc({
 			entries: {
-				rsc: "./src/framework/entry.rsc.tsx",
-				ssr: "./src/framework/entry.ssr.tsx",
-				client: "./src/framework/entry.browser.tsx",
+				rsc: "./src/lib/framework/entry.rsc.tsx",
+				ssr: "./src/lib/framework/entry.ssr.tsx",
+				client: "./src/lib/framework/entry.browser.tsx",
 			},
 		}),
 		react(),
