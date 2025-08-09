@@ -17,7 +17,9 @@ export function Content(props: ContentProps) {
 		"VPContent",
 		isHome && "is-home",
 		hasSidebar && "has-sidebar",
-	].filter(Boolean).join(" ");
+	]
+		.filter(Boolean)
+		.join(" ");
 
 	return (
 		<div className={contentClasses}>

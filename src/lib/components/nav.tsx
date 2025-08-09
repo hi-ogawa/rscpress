@@ -10,7 +10,9 @@ export function Nav({ isHome = false }: NavProps) {
 		"VPNavBar",
 		isHome && "home",
 		"top", // TODO: Add scroll detection for dynamic top class
-	].filter(Boolean).join(" ");
+	]
+		.filter(Boolean)
+		.join(" ");
 
 	return (
 		<header className="VPNav">

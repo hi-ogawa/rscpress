@@ -1,41 +1,41 @@
 /* VitePress Home Page Styles - Copied from VPHome.vue */
 
 .VPHome {
-  margin-bottom: 96px;
+	margin-bottom: 96px;
 }
 
 @media (min-width: 768px) {
-  .VPHome {
-    margin-bottom: 128px;
-  }
+	.VPHome {
+		margin-bottom: 128px;
+	}
 }
 
 /* VPHomeContent styles - Copied from VPHomeContent.vue */
 .VPHomeContent {
-  margin: auto;
-  width: 100%;
-  max-width: 1280px;
-  padding: 0 24px;
+	margin: auto;
+	width: 100%;
+	max-width: 1280px;
+	padding: 0 24px;
 }
 
 @media (min-width: 640px) {
-  .VPHomeContent {
-    padding: 0 48px;
-  }
+	.VPHomeContent {
+		padding: 0 48px;
+	}
 }
 
 @media (min-width: 960px) {
-  .VPHomeContent {
-    width: 100%;
-    padding: 0 64px;
-  }
+	.VPHomeContent {
+		width: 100%;
+		padding: 0 64px;
+	}
 }
 
 .VPHomeContent .container {
-  margin: 0 auto;
-  max-width: 1152px;
+	margin: 0 auto;
+	max-width: 1152px;
 }
 
 .VPHomeContent .vp-doc {
-  /* Apply doc styles to home content */
+	/* Apply doc styles to home content */
 }
