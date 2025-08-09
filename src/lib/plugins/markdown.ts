@@ -37,7 +37,7 @@ export function markdownPlugin(): Plugin[] {
 						remarkGfm,
 						remarkDirective,
 						remarkFrontmatter,
-						customDirectivePlugin,
+						remarkCustom,
 					],
 					rehypePlugins: [
 						// https://shiki.style/packages/rehype
@@ -71,10 +71,10 @@ export function markdownPlugin(): Plugin[] {
 	];
 }
 
-// https://github.com/remarkjs/remark-directive/
-function customDirectivePlugin() {
+function remarkCustom() {
 	return function (tree: Root, file: VFile) {
 		visit(tree, function (node) {
+			// https://github.com/remarkjs/remark-directive/
 			if (
 				node.type === "containerDirective" ||
 				node.type === "leafDirective" ||
@@ -103,6 +103,8 @@ function customDirectivePlugin() {
 				}
 				file.info("Unknown directive: " + node.name);
 			}
+
+			// https://vitepress.dev/guide/markdown#github-flavored-alerts
 		});
 	};
 }
