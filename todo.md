@@ -1,0 +1,20 @@
+# step 1
+
+start with basic visual to match vitepress style.
+no md, mdx support yet. just write react component.
+
+- src/examples as demo. roughly corresponds to content of vitepress doc e.g.
+  - https://vitepress.dev/guide/getting-started
+  - (vitepress-repo)/docs/en/guide/getting-started.md
+  - src/examples/getting-started.tsx
+- porting
+  - (vitepress-repo)/src/client/theme-default/components -> src/components
+  - (vitepress-repo)/src/client/theme-default/styles -> src/styles
+
+# step 2 
+
+- setup mdx compiler to support mdx authoring
+
+# step 3 (postponed)
+
+- configuration, plugin system, etc...
