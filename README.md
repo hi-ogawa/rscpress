@@ -1,1 +1,5 @@
 # rscpress
+
+```js
+pnpm dev
+```
