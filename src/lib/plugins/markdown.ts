@@ -59,7 +59,9 @@ export function markdownPlugin(): Plugin[] {
 				});
 			},
 			buildEnd() {
-				highlighter.dispose();
+				if (this.environment.mode === "dev") {
+					highlighter.dispose();
+				}
 			},
 			async transform(code, id) {
 				const { filename, query } = parseIdQuery(id);
