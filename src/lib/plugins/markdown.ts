@@ -12,18 +12,16 @@ import type { ShikiTransformer } from "shiki";
 import type { Plugin } from "vite";
 
 export function markdownPlugin(): Plugin[] {
-	// cf. https://github.com/mdx-js/mdx/blob/2b3381a8962dc888c0f2ed181cf80c6a1140b662/packages/rollup/lib/index.js
+	// https://github.com/mdx-js/mdx/blob/2b3381a8962dc888c0f2ed181cf80c6a1140b662/packages/rollup/lib/index.js
 	let processors: ReturnType<typeof createFormatAwareProcessors>;
+	let highlighter: Awaited<ReturnType<typeof createHighlighterCore>>;
 
 	return [
 		{
 			name: "rscpress:mdx",
 			async config() {
-				const highlighter = await createHighlighterCore({
-					themes: [
-						import("@shikijs/themes/vitesse-light"),
-						import("@shikijs/themes/vitesse-dark"),
-					],
+				highlighter = await createHighlighterCore({
+					themes: [import("@shikijs/themes/github-light")],
 					langs: [
 						import("@shikijs/langs/json"),
 						import("@shikijs/langs/javascript"),
@@ -40,8 +38,7 @@ export function markdownPlugin(): Plugin[] {
 							highlighter,
 							{
 								themes: {
-									light: "vitesse-light",
-									dark: "vitesse-dark",
+									light: "github-light",
 								},
 								addLanguageClass: true,
 								defaultLanguage: "text",
@@ -50,6 +47,9 @@ export function markdownPlugin(): Plugin[] {
 						],
 					],
 				});
+			},
+			buildEnd() {
+				highlighter.dispose();
 			},
 			async transform(code, id) {
 				const { filename, query } = parseIdQuery(id);
@@ -76,6 +76,7 @@ function parseIdQuery(id: string): {
 	return { filename, query };
 }
 
+// https://shiki.style/guide/transformers
 function createVitepressTransformer(): ShikiTransformer[] {
 	return [
 		{
