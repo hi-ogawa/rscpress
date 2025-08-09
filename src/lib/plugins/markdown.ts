@@ -71,6 +71,12 @@ export function markdownPlugin(): Plugin[] {
 	];
 }
 
+// https://vitepress.dev/guide/markdown#custom-containers
+const CUSTOM_BLOCKS = ["info", "tip", "warning", "danger", "details"];
+
+// https://vitepress.dev/guide/markdown#github-flavored-alerts
+const GITHUB_ALERTS = ["note", "tip", "important", "warning", "caution"];
+
 function remarkCustom() {
 	return function (tree: Root, file: VFile) {
 		visit(tree, function (node) {
@@ -80,16 +86,36 @@ function remarkCustom() {
 				node.type === "leafDirective" ||
 				node.type === "textDirective"
 			) {
-				if (node.name === "tip") {
+				if (CUSTOM_BLOCKS.includes(node.name)) {
+					// add custom-block class
 					const data = node.data || (node.data = {});
 					const tagName = "div";
 					data.hName = tagName;
 					data.hProperties = h(tagName, node.attributes || {}).properties;
-					// TODO: handle label
-					const label = node.children[0];
-					if (label.data && "directiveLabel" in label.data) {
+					data.hProperties["class"] = `custom-block ${node.name}`;
+					// process label
+					const directiveLabel = node.children[0];
+					let label = node.name.toUpperCase();
+					if (directiveLabel.data && "directiveLabel" in directiveLabel.data) {
+						label = (directiveLabel as any).children[0].value;
 						node.children.shift();
 					}
+					const labelNode = {
+						type: "paragraph",
+						children: [
+							{
+								type: "text",
+								value: label,
+							},
+						],
+						data: {
+							hName: "p",
+							hProperties: {
+								class: "custom-block-title",
+							},
+						},
+					};
+					node.children.unshift(labelNode as any);
 					return;
 				}
 				if (node.name === "code-group") {
@@ -104,7 +130,9 @@ function remarkCustom() {
 				file.info("Unknown directive: " + node.name);
 			}
 
+			// TODO
 			// https://vitepress.dev/guide/markdown#github-flavored-alerts
+			GITHUB_ALERTS;
 		});
 	};
 }
