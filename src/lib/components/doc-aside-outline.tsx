@@ -1,6 +1,6 @@
-import './table-of-contents.css';
+import './doc-aside-outline.css';
 
-export function TableOfContents() {
+export function DocAsideOutline() {
 	return (
 		<div className="aside">
 			<div className="aside-container">

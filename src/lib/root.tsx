@@ -1,5 +1,5 @@
 import "./styles/index.css";
-import DocLayout from "./layout/doc-layout.tsx";
+import { Layout } from "./layout";
 import Page from "../example/guide/getting-started.tsx";
 
 export function Root() {
@@ -12,9 +12,9 @@ export function Root() {
 				<title>Vite + RSC</title>
 			</head>
 			<body>
-				<DocLayout>
+				<Layout layout="doc">
 					<Page />
-				</DocLayout>
+				</Layout>
 			</body>
 		</html>
 	);

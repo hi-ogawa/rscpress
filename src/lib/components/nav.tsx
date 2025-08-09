@@ -1,6 +1,6 @@
-import './nav-bar.css';
+import './nav.css';
 
-export function NavBar() {
+export function Nav() {
 	return (
 		<header className="VPNavBar">
 			<div className="container">
