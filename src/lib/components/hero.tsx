@@ -1,4 +1,5 @@
 import type { HeroConfig } from "./home";
+import { VPButton } from "./button";
 import "./hero.css";
 
 export function Hero(props: HeroConfig) {
@@ -21,12 +22,12 @@ export function Hero(props: HeroConfig) {
 						<div className="actions">
 							{actions.map((action, index) => (
 								<div key={index} className="action">
-									<a
-										className={`VPButton ${action.theme || "brand"}`}
+									<VPButton
+										size="medium"
+										theme={action.theme || "brand"}
+										text={action.text}
 										href={action.link}
-									>
-										{action.text}
-									</a>
+									/>
 								</div>
 							))}
 						</div>
