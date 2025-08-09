@@ -15,7 +15,7 @@ You can try VitePress directly in your browser on [StackBlitz](https://vitepress
 
 VitePress can be used on its own, or be installed into an existing project. In both cases, you can install it with:
 
-::: code-group
+:::code-group
 
 ```sh [npm]
 $ npm add -D vitepress
@@ -39,7 +39,7 @@ $ bun add -D vitepress
 
 :::
 
-::: tip NOTE
+:::tip[NOTE]
 
 VitePress is an ESM-only package. Don't use `require()` to import it, and make sure your nearest `package.json` contains `"type": "module"`, or change the file extension of your relevant files like `.vitepress/config.js` to `.mjs`/`.mts`. Refer to [Vite's troubleshooting guide](http://vitejs.dev/guide/troubleshooting.html#this-package-is-esm-only) for more details. Also, inside async CJS contexts, you can use `await import('vitepress')` instead.
 
@@ -49,7 +49,7 @@ VitePress is an ESM-only package. Don't use `require()` to import it, and make s
 
 VitePress ships with a command line setup wizard that will help you scaffold a basic project. After installation, start the wizard by running:
 
-::: code-group
+:::code-group
 
 ```sh [npm]
 $ npx vitepress init
@@ -71,9 +71,9 @@ $ bun vitepress init
 
 You will be greeted with a few simple questions:
 
-<<< @/snippets/init.ansi
+::snippet[@/snippets/init.ansi]
 
-::: tip Vue as Peer Dependency
+:::tip[Vue as Peer Dependency]
 If you intend to perform customization that uses Vue components or APIs, you should also explicitly install `vue` as a dependency.
 :::
 
@@ -96,7 +96,7 @@ Assuming you chose to scaffold the VitePress project in `./docs`, the generated 
 
 The `docs` directory is considered the **project root** of the VitePress site. The `.vitepress` directory is a reserved location for VitePress' config file, dev server cache, build output, and optional theme customization code.
 
-::: tip
+:::tip
 By default, VitePress stores its dev server cache in `.vitepress/cache`, and the production build output in `.vitepress/dist`. If using Git, you should add them to your `.gitignore` file. These locations can also be [configured](../reference/site-config#outdir).
 :::
 
@@ -144,7 +144,7 @@ The tool should have also injected the following npm scripts to your `package.js
 
 The `docs:dev` script will start a local dev server with instant hot updates. Run it with the following command:
 
-::: code-group
+:::code-group
 
 ```sh [npm]
 $ npm run docs:dev
@@ -166,7 +166,7 @@ $ bun run docs:dev
 
 Instead of npm scripts, you can also invoke VitePress directly with:
 
-::: code-group
+:::code-group
 
 ```sh [npm]
 $ npx vitepress dev docs

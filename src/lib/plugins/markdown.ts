@@ -10,6 +10,9 @@ import rehypeShikiFromHighlighter, {
 } from "@shikijs/rehype/core";
 import type { ShikiTransformer } from "shiki";
 import type { Plugin } from "vite";
+import { visit } from "unist-util-visit";
+import type { Root } from "mdast";
+import { h } from "hastscript";
 
 export function markdownPlugin(): Plugin[] {
 	// https://github.com/mdx-js/mdx/blob/2b3381a8962dc888c0f2ed181cf80c6a1140b662/packages/rollup/lib/index.js
@@ -30,7 +33,12 @@ export function markdownPlugin(): Plugin[] {
 					engine: createOnigurumaEngine(() => import("shiki/wasm")),
 				});
 				processors = createFormatAwareProcessors({
-					remarkPlugins: [remarkGfm, remarkDirective, remarkFrontmatter],
+					remarkPlugins: [
+						remarkGfm,
+						remarkDirective,
+						remarkFrontmatter,
+						customDirectivePlugin,
+					],
 					rehypePlugins: [
 						// https://shiki.style/packages/rehype
 						[
@@ -61,6 +69,42 @@ export function markdownPlugin(): Plugin[] {
 			},
 		},
 	];
+}
+
+// https://github.com/remarkjs/remark-directive/
+function customDirectivePlugin() {
+	return function (tree: Root, file: VFile) {
+		visit(tree, function (node) {
+			if (
+				node.type === "containerDirective" ||
+				node.type === "leafDirective" ||
+				node.type === "textDirective"
+			) {
+				if (node.name === "tip") {
+					const data = node.data || (node.data = {});
+					const tagName = "div";
+					data.hName = tagName;
+					data.hProperties = h(tagName, node.attributes || {}).properties;
+					// TODO: handle label
+					const label = node.children[0];
+					if (label.data && "directiveLabel" in label.data) {
+						node.children.shift();
+					}
+					return;
+				}
+				if (node.name === "code-group") {
+					// TODO
+					return;
+				}
+				if (node.name === "snippet") {
+					// TODO
+					node.children = [];
+					return;
+				}
+				file.info("Unknown directive: " + node.name);
+			}
+		});
+	};
 }
 
 // https://github.com/vitejs/vite-plugin-vue/blob/06931b1ea2b9299267374cb8eb4db27c0626774a/packages/plugin-vue/src/utils/query.ts#L13
