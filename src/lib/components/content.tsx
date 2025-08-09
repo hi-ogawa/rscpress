@@ -4,16 +4,26 @@ import "./content.css";
 
 interface ContentProps {
 	layout?: "home" | "page" | "doc";
+	isHome: boolean;
+	hasSidebar: boolean;
 	children: React.ReactNode;
 }
 
 export function Content(props: ContentProps) {
-	const { layout = "doc", children } = props;
+	const { layout = "doc", isHome, hasSidebar, children } = props;
+
+	// Build VitePress-style CSS classes
+	const contentClasses = [
+		"VPContent",
+		isHome && "is-home",
+		hasSidebar && "has-sidebar",
+	].filter(Boolean).join(" ");
 
 	return (
-		<div className="VPContent has-sidebar">
+		<div className={contentClasses}>
+			{layout === "home" && children}
 			{layout === "doc" && <Doc>{children}</Doc>}
-			{/* Future: add Home and Page components */}
+			{/* Future: add Page component */}
 		</div>
 	);
 }

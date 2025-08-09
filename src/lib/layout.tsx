@@ -12,16 +12,17 @@ interface LayoutProps {
 export function Layout(props: LayoutProps) {
 	const { children, layout = "doc" } = props;
 
+	// Determine layout classes like VitePress
+	const isHome = layout === "home";
+	const hasSidebar = layout === "doc"; // TODO: Add proper sidebar detection logic
+
 	return (
 		<div className="Layout">
-			<Nav />
-			{layout === "doc" && (
-				<>
-					<Sidebar />
-					<Content layout={layout}>{children}</Content>
-				</>
-			)}
-			{layout === "home" && children}
+			<Nav isHome={isHome} />
+			{hasSidebar && <Sidebar />}
+			<Content layout={layout} isHome={isHome} hasSidebar={hasSidebar}>
+				{children}
+			</Content>
 		</div>
 	);
 }

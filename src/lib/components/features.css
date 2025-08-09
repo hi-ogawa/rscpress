@@ -1,159 +1,140 @@
-/* VitePress Features Section Styles */
+/* VitePress Features Section Styles - Copied from VPFeatures.vue and VPFeature.vue */
 
 .VPFeatures {
-	position: relative;
-	padding: 0 24px;
+  position: relative;
+  padding: 0 24px;
 }
 
 @media (min-width: 640px) {
-	.VPFeatures {
-		padding: 0 48px;
-	}
+  .VPFeatures {
+    padding: 0 48px;
+  }
 }
 
 @media (min-width: 960px) {
-	.VPFeatures {
-		padding: 0 64px;
-	}
+  .VPFeatures {
+    padding: 0 64px;
+  }
 }
 
 .VPFeatures .container {
-	margin: 0 auto;
-	max-width: 1152px;
+  margin: 0 auto;
+  max-width: 1152px;
 }
 
 .VPFeatures .items {
-	display: flex;
-	flex-wrap: wrap;
-	margin: -8px;
+  display: flex;
+  flex-wrap: wrap;
+  margin: -8px;
 }
 
 .VPFeatures .item {
-	padding: 8px;
-	width: 100%;
+  padding: 8px;
+  width: 100%;
 }
 
 @media (min-width: 640px) {
-	.VPFeatures .item.grid-2,
-	.VPFeatures .item.grid-4,
-	.VPFeatures .item.grid-6 {
-		width: calc(100% / 2);
-	}
+  .VPFeatures .item.grid-2,
+  .VPFeatures .item.grid-4,
+  .VPFeatures .item.grid-6 {
+    width: calc(100% / 2);
+  }
 }
 
 @media (min-width: 768px) {
-	.VPFeatures .item.grid-2,
-	.VPFeatures .item.grid-4 {
-		width: calc(100% / 2);
-	}
+  .VPFeatures .item.grid-2,
+  .VPFeatures .item.grid-4 {
+    width: calc(100% / 2);
+  }
 
-	.VPFeatures .item.grid-3,
-	.VPFeatures .item.grid-6 {
-		width: calc(100% / 3);
-	}
+  .VPFeatures .item.grid-3,
+  .VPFeatures .item.grid-6 {
+    width: calc(100% / 3);
+  }
 }
 
 @media (min-width: 960px) {
-	.VPFeatures .item.grid-4 {
-		width: calc(100% / 4);
-	}
+  .VPFeatures .item.grid-4 {
+    width: calc(100% / 4);
+  }
 }
 
-/* Feature Card Styles */
+/* Feature Card Styles - Copied from VPFeature.vue */
 .VPFeature {
-	display: block;
-	border: 1px solid var(--vp-c-bg-soft);
-	border-radius: 12px;
-	height: 100%;
-	background-color: var(--vp-c-bg-soft);
-	transition:
-		border-color 0.25s,
-		background-color 0.25s;
-	text-decoration: none;
-	color: inherit;
+  display: block;
+  border: 1px solid var(--vp-c-bg-soft);
+  border-radius: 12px;
+  height: 100%;
+  background-color: var(--vp-c-bg-soft);
+  transition: border-color 0.25s, background-color 0.25s;
 }
 
-.VPFeature:hover {
-	border-color: var(--vp-c-brand-1);
+.VPFeature.link:hover {
+  border-color: var(--vp-c-brand-1);
 }
 
 .VPFeature .box {
-	display: flex;
-	flex-direction: column;
-	padding: 24px;
-	height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  height: 100%;
 }
 
 .VPFeature .icon {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin-bottom: 20px;
-	border-radius: 6px;
-	background-color: var(--vp-c-default-soft);
-	width: 48px;
-	height: 48px;
-	font-size: 24px;
-	transition: background-color 0.25s;
-}
-
-.VPFeature .icon > div,
-.VPFeature .icon > span {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  background-color: var(--vp-c-default-soft);
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+  transition: background-color 0.25s;
 }
 
 .VPFeature .title {
-	line-height: 24px;
-	font-size: 16px;
-	font-weight: 600;
-	margin: 0;
+  line-height: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
 }
 
 .VPFeature .details {
-	flex-grow: 1;
-	padding-top: 8px;
-	line-height: 24px;
-	font-size: 14px;
-	font-weight: 500;
-	color: var(--vp-c-text-2);
-	margin: 0;
+  flex-grow: 1;
+  padding-top: 8px;
+  line-height: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vp-c-text-2);
+  margin: 0;
 }
 
 .VPFeature .link-text {
-	padding-top: 8px;
+  padding-top: 8px;
 }
 
-.VPFeature .link-text span {
-	display: inline-flex;
-	align-items: center;
-	font-size: 14px;
-	font-weight: 500;
-	color: var(--vp-c-brand-1);
+.VPFeature .link-text-value {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vp-c-brand-1);
+  margin: 0;
 }
 
-.VPFeature .link-text svg {
-	margin-left: 6px;
-	width: 14px;
-	height: 14px;
-	fill: currentColor;
+.VPFeature .link-text-icon {
+  margin-left: 6px;
 }
 
-/* Arrow icon for links */
-.VPFeature .link-text::after {
-	content: "";
-	display: inline-block;
-	width: 14px;
-	height: 14px;
-	margin-left: 6px;
-	background-color: currentColor;
-	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='currentColor' d='M7.28033 3.21967C6.98744 2.92678 6.51256 2.92678 6.21967 3.21967C5.92678 3.51256 5.92678 3.98744 6.21967 4.28033L8.43934 6.5H2.75C2.33579 6.5 2 6.83579 2 7.25C2 7.66421 2.33579 8 2.75 8H8.43934L6.21967 10.2197C5.92678 10.5126 5.92678 10.9874 6.21967 11.2803C6.51256 11.5732 6.98744 11.5732 7.28033 11.2803L10.7803 7.78033C11.0732 7.48744 11.0732 7.01256 10.7803 6.71967L7.28033 3.21967Z'/%3E%3C/svg%3E")
-		no-repeat;
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='currentColor' d='M7.28033 3.21967C6.98744 2.92678 6.51256 2.92678 6.21967 3.21967C5.92678 3.51256 5.92678 3.98744 6.21967 4.28033L8.43934 6.5H2.75C2.33579 6.5 2 6.83579 2 7.25C2 7.66421 2.33579 8 2.75 8H8.43934L6.21967 10.2197C5.92678 10.5126 5.92678 10.9874 6.21967 11.2803C6.51256 11.5732 6.98744 11.5732 7.28033 11.2803L10.7803 7.78033C11.0732 7.48744 11.0732 7.01256 10.7803 6.71967L7.28033 3.21967Z'/%3E%3C/svg%3E")
-		no-repeat;
-	-webkit-mask-size: 100% 100%;
-	mask-size: 100% 100%;
+/* VPI Arrow Right Icon - Using mask approach like VitePress */
+.vpi-arrow-right {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 12h14m-7-7l7 7l-7 7'/%3E%3C/svg%3E") no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 12h14m-7-7l7 7l-7 7'/%3E%3C/svg%3E") no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }

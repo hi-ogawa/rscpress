@@ -491,6 +491,7 @@
 	--vp-nav-bg-color: var(--vp-c-bg);
 	--vp-nav-screen-bg-color: var(--vp-c-bg);
 	--vp-nav-logo-height: 24px;
+	--vp-layout-top-height: 0px;
 }
 
 .hide-nav {
