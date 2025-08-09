@@ -3,6 +3,7 @@ import { VFile } from "vfile";
 import remarkGfm from "remark-gfm";
 import remarkDirective from "remark-directive";
 import remarkFrontmatter from "remark-frontmatter";
+import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import rehypeShikiFromHighlighter, {
@@ -37,6 +38,7 @@ export function markdownPlugin(): Plugin[] {
 						remarkGfm,
 						remarkDirective,
 						remarkFrontmatter,
+						remarkMdxFrontmatter,
 						remarkCustom,
 					],
 					rehypePlugins: [
