@@ -1,0 +1,31 @@
+/* VitePress Home Page Styles */
+
+.VPHome {
+	padding: 0 24px;
+}
+
+@media (min-width: 640px) {
+	.VPHome {
+		padding: 0 48px;
+	}
+}
+
+@media (min-width: 960px) {
+	.VPHome {
+		padding: 0 64px;
+	}
+}
+
+.VPHomeContent {
+	margin: 0 auto;
+	padding: 64px 0;
+}
+
+.VPHomeContent .container {
+	margin: 0 auto;
+	max-width: 1152px;
+}
+
+.VPHomeContent .vp-doc {
+	/* Apply doc styles to home content */
+}

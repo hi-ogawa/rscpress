@@ -15,8 +15,13 @@ export function Layout(props: LayoutProps) {
 	return (
 		<div className="Layout">
 			<Nav />
-			<Sidebar />
-			<Content layout={layout}>{children}</Content>
+			{layout === "doc" && (
+				<>
+					<Sidebar />
+					<Content layout={layout}>{children}</Content>
+				</>
+			)}
+			{layout === "home" && children}
 		</div>
 	);
 }

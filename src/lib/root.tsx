@@ -1,18 +1,21 @@
 import "./styles/index.css";
 import { Layout } from "./layout";
-import * as Home from "../example/index.md?mdx";
+import { Home, type HeroConfig, type FeatureConfig } from "./components/home";
+import * as Index from "../example/index.md?mdx";
 import Guide from "../example/guide/getting-started.md?mdx";
 
 export async function Root(props: { request: Request }) {
 	const url = new URL(props.request.url);
 	let content: React.ReactNode;
 	if (url.pathname === "/") {
-		console.log(Home.frontmatter);
+		const { hero, features } = Index.frontmatter as {
+			hero?: HeroConfig;
+			features?: FeatureConfig[];
+		};
 		content = (
-			<div>
-				<h1>Hom</h1>
-				<a href="/guide/getting-started">Guide</a>
-			</div>
+			<Layout layout="home">
+				<Home hero={hero} features={features} />
+			</Layout>
 		);
 	} else {
 		content = (
