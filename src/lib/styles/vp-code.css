@@ -171,11 +171,6 @@ html:not(.dark) .shiki span {
 	color: var(--shiki-dark);
 }
 
-/* Code line specific styling */
-.vp-doc [class*="language-"] .line {
-	/* Additional line-specific styles if needed */
-}
-
 /* Highlighted lines */
 .vp-doc [class*="language-"] code .highlighted {
 	background-color: var(--vp-code-line-highlight-color);
