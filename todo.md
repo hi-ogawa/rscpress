@@ -14,6 +14,12 @@ no md, mdx support yet. just write react component.
 # step 2 
 
 - setup mdx compiler to support mdx authoring
+- custom mdx transformation
+  - frontmatter
+  - code-group
+  - tip
+  - code block with syntax highlighting
+  - snippet
 
 # step 3 (postponed)
 
