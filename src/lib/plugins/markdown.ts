@@ -124,6 +124,10 @@ function remarkCustom() {
 				}
 				if (node.name === "snippet") {
 					// TODO
+					const value = (node.children[0] as any)?.value;
+					if (!value) {
+						file.info("Misisng value for '::snippet'");
+					}
 					node.children = [];
 					return;
 				}
