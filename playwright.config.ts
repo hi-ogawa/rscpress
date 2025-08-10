@@ -1,0 +1,27 @@
+import { defineConfig, devices } from "@playwright/test";
+
+export default defineConfig({
+	testDir: "e2e",
+	use: {
+		trace: "on-first-retry",
+	},
+	expect: {
+		toPass: { timeout: 10000 },
+	},
+	projects: [
+		{
+			name: "chromium",
+			use: {
+				...devices["Desktop Chrome"],
+				viewport: null,
+				deviceScaleFactor: undefined,
+			},
+		},
+	],
+	workers: 1,
+	forbidOnly: !!process.env.CI,
+	retries: process.env.CI ? 2 : 0,
+	reporter: ["list", process.env.CI && "github"]
+		.filter(Boolean)
+		.map((name) => [name] as any),
+}) as any;

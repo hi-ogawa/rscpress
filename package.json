@@ -8,6 +8,7 @@
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
+		"test-e2e": "playwright test",
 		"tsc": "tsc -b",
 		"tsc-dev": "tsc -b --watch --preserveWatchOutput",
 		"lint": "biome check --write .",
@@ -21,6 +22,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^2.1.4",
 		"@mdx-js/mdx": "^3.1.0",
+		"@playwright/test": "^1.54.2",
 		"@shikijs/langs": "^3.9.2",
 		"@shikijs/rehype": "^3.9.2",
 		"@shikijs/themes": "^3.9.2",
