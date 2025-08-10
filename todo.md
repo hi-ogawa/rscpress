@@ -23,7 +23,7 @@ no md, mdx support yet. just write react component.
 - we can copy rspress's plugins
   - https://github.com/web-infra-dev/rspress/tree/main/packages/core/src/node/mdx
 
-# step 3 (MVP)
+# step 3
 
 - basic routing
 - ssg
