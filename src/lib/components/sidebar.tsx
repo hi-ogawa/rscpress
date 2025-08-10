@@ -5,10 +5,10 @@ export function Sidebar() {
 		<aside className="VPSidebar">
 			<nav>
 				<div className="sidebar-group">
-					<h5>Guide</h5>
+					<h5>Introduction</h5>
 					<ul className="sidebar-links">
 						<li>
-							<a href="#" className="sidebar-link active">
+							<a href="/guide/getting-started" className="sidebar-link active">
 								Getting Started
 							</a>
 						</li>
@@ -44,8 +44,8 @@ export function Sidebar() {
 							</a>
 						</li>
 						<li>
-							<a href="#" className="sidebar-link">
-								Frontmatter Config
+							<a href="/guide/frontmatter" className="sidebar-link">
+								Frontmatter
 							</a>
 						</li>
 						<li>
