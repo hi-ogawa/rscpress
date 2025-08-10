@@ -27,6 +27,7 @@ no md, mdx support yet. just write react component.
 
 - basic routing
 - ssg
+- packaging
 
 # step 4
 
