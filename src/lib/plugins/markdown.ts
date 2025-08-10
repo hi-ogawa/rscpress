@@ -11,6 +11,7 @@ import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import type { ShikiTransformer } from "shiki";
 import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
+import type * as unified from "unified";
 import { visit } from "unist-util-visit";
 import { VFile } from "vfile";
 import type { Plugin } from "vite";
@@ -81,8 +82,8 @@ const CUSTOM_BLOCKS = ["info", "tip", "warning", "danger", "details"];
 // https://vitepress.dev/guide/markdown#github-flavored-alerts
 const GITHUB_ALERTS = ["note", "tip", "important", "warning", "caution"];
 
-function remarkCustom() {
-	return function (tree: Root, file: VFile) {
+const remarkCustom: unified.Plugin<[], Root> = () => {
+	return function (tree, file) {
 		visit(tree, function (node) {
 			// https://github.com/remarkjs/remark-directive/
 			if (
@@ -143,7 +144,7 @@ function remarkCustom() {
 			GITHUB_ALERTS;
 		});
 	};
-}
+};
 
 // https://github.com/vitejs/vite-plugin-vue/blob/06931b1ea2b9299267374cb8eb4db27c0626774a/packages/plugin-vue/src/utils/query.ts#L13
 function parseIdQuery(id: string): {
