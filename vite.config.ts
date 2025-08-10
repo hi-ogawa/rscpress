@@ -31,13 +31,24 @@ function rscpress(): Plugin[] {
 	return [
 		...markdownPlugin(),
 		createVirtualPlugin("rscpress:routes", async function () {
-			// TODO: use glob
-			// const glob = import.meta.glob("/src/example/**/*.{md,mdx}", { query: "?mdx" });
+			const globBase = "/src/example";
+			const globPattern = `${globBase}/**/*.{md,mdx}`;
+			function normalizeGlob(glob: Record<string, unknown>, globBase: string) {
+				return Object.fromEntries(
+					Object.entries(glob).map(([key, value]) => {
+						key = key
+							.slice(globBase.length)
+							.replace(/\.\w*$/, "")
+							.replace(/\/index$/, "/");
+						return [key, value];
+					}),
+				);
+			}
 			return /* js */ `
-export default {
-	"/": () => import("/src/example/index.md?mdx"),
-	"/guide/getting-started": () => import("/src/example/guide/getting-started.md?mdx"),
-};
+const glob = import.meta.glob(${JSON.stringify(globPattern)}, { query: "?mdx" });
+const globBase = ${JSON.stringify(globBase)};
+const normalized = ${normalizeGlob.toString()}(glob, globBase);
+export default normalized;
 `;
 		}),
 		{
