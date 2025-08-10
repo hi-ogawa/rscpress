@@ -8,7 +8,7 @@
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
-    "test-e2e": "playwright test",
+		"test-e2e": "playwright test",
 		"tsc": "tsc -b",
 		"tsc-dev": "tsc -b --watch --preserveWatchOutput",
 		"lint": "biome check --write .",
