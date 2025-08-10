@@ -46,6 +46,9 @@ async function main() {
 		}, [setPayload_]);
 
 		React.useEffect(() => {
+			// TODO: scroll restoration
+			history.scrollRestoration = "manual";
+
 			return listenNavigation(() => onNavigation());
 		}, []);
 
