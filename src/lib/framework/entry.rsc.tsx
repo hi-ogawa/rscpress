@@ -1,7 +1,9 @@
 import * as ReactServer from "@vitejs/plugin-rsc/rsc";
-import { Root } from "../root.tsx";
+import { Root, getStaticPaths } from "../root.tsx";
 import type { RscPayload } from "@vitejs/plugin-rsc/rsc-Cv3XEZqB";
 import { RSC_POSTFIX } from "./shared.tsx";
+
+export { getStaticPaths };
 
 export default async function handler(request: Request): Promise<Response> {
 	let url = new URL(request.url);

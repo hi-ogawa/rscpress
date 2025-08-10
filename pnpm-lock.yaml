@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@vitejs/plugin-rsc':
         specifier: latest
-        version: 0.4.17(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(vite@7.1.1(yaml@2.8.1))
+        version: 0.4.17(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -36,6 +36,9 @@ importers:
       '@types/mdast':
         specifier: ^4.0.4
         version: 4.0.4
+      '@types/node':
+        specifier: ^24.2.1
+        version: 24.2.1
       '@types/react':
         specifier: ^19.1.9
         version: 19.1.9
@@ -47,7 +50,7 @@ importers:
         version: 3.0.3
       '@vitejs/plugin-react':
         specifier: latest
-        version: 5.0.0(vite@7.1.1(yaml@2.8.1))
+        version: 5.0.0(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))
       hastscript:
         specifier: ^9.0.1
         version: 9.0.1
@@ -89,10 +92,10 @@ importers:
         version: 6.0.3
       vite:
         specifier: ^7.0.6
-        version: 7.1.1(yaml@2.8.1)
+        version: 7.1.1(@types/node@24.2.1)(yaml@2.8.1)
       vite-plugin-inspect:
         specifier: ^11.3.2
-        version: 11.3.2(vite@7.1.1(yaml@2.8.1))
+        version: 11.3.2(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))
 
 packages:
 
@@ -573,6 +576,9 @@ packages:
 
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
+
+  '@types/node@24.2.1':
+    resolution: {integrity: sha512-DRh5K+ka5eJic8CjH7td8QpYEV6Zo10gfRkjHCO3weqZHWDtAaSTFtl4+VMqOJ4N5jcuhZ9/l+yy8rVgw7BQeQ==}
 
   '@types/react-dom@19.1.7':
     resolution: {integrity: sha512-i5ZzwYpqjmrKenzkoLM2Ibzt6mAsM7pxB6BCIouEVVmgiqaMj1TjaK7hnA36hbW5aZv20kx7Lw6hWzPWg0Rurw==}
@@ -1223,6 +1229,9 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  undici-types@7.10.0:
+    resolution: {integrity: sha512-t5Fy/nfn+14LuOc2KNYg75vZqClpAiqscVvMygNnlsHBFpSXdJaYtXMcdNLpl/Qvc3P2cB3s6lOV51nqsFq4ag==}
+
   unified@11.0.5:
     resolution: {integrity: sha512-xKvGhPWw3k84Qjh8bI3ZeJjqnyadK+GEFtazSfZv/rKeTkTjOJho6mFqh2SM96iIcZokxiOpg78GazTSg8+KHA==}
 
@@ -1785,6 +1794,10 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
+  '@types/node@24.2.1':
+    dependencies:
+      undici-types: 7.10.0
+
   '@types/react-dom@19.1.7(@types/react@19.1.9)':
     dependencies:
       '@types/react': 19.1.9
@@ -1799,7 +1812,7 @@ snapshots:
 
   '@ungap/structured-clone@1.3.0': {}
 
-  '@vitejs/plugin-react@5.0.0(vite@7.1.1(yaml@2.8.1))':
+  '@vitejs/plugin-react@5.0.0(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))':
     dependencies:
       '@babel/core': 7.28.0
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.28.0)
@@ -1807,11 +1820,11 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.30
       '@types/babel__core': 7.20.5
       react-refresh: 0.17.0
-      vite: 7.1.1(yaml@2.8.1)
+      vite: 7.1.1(@types/node@24.2.1)(yaml@2.8.1)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-rsc@0.4.17(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(vite@7.1.1(yaml@2.8.1))':
+  '@vitejs/plugin-rsc@0.4.17(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))':
     dependencies:
       '@remix-run/node-fetch-server': 0.8.0
       es-module-lexer: 1.7.0
@@ -1822,8 +1835,8 @@ snapshots:
       react-dom: 19.1.1(react@19.1.1)
       turbo-stream: 3.1.0
       use-sync-external-store: 1.5.0(react@19.1.1)
-      vite: 7.1.1(yaml@2.8.1)
-      vitefu: 1.1.1(vite@7.1.1(yaml@2.8.1))
+      vite: 7.1.1(@types/node@24.2.1)(yaml@2.8.1)
+      vitefu: 1.1.1(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))
 
   acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
@@ -2865,6 +2878,8 @@ snapshots:
 
   typescript@5.9.2: {}
 
+  undici-types@7.10.0: {}
+
   unified@11.0.5:
     dependencies:
       '@types/unist': 3.0.3
@@ -2939,17 +2954,17 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-dev-rpc@1.1.0(vite@7.1.1(yaml@2.8.1)):
+  vite-dev-rpc@1.1.0(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1)):
     dependencies:
       birpc: 2.5.0
-      vite: 7.1.1(yaml@2.8.1)
-      vite-hot-client: 2.1.0(vite@7.1.1(yaml@2.8.1))
+      vite: 7.1.1(@types/node@24.2.1)(yaml@2.8.1)
+      vite-hot-client: 2.1.0(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))
 
-  vite-hot-client@2.1.0(vite@7.1.1(yaml@2.8.1)):
+  vite-hot-client@2.1.0(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1)):
     dependencies:
-      vite: 7.1.1(yaml@2.8.1)
+      vite: 7.1.1(@types/node@24.2.1)(yaml@2.8.1)
 
-  vite-plugin-inspect@11.3.2(vite@7.1.1(yaml@2.8.1)):
+  vite-plugin-inspect@11.3.2(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1)):
     dependencies:
       ansis: 4.1.0
       debug: 4.4.1
@@ -2959,12 +2974,12 @@ snapshots:
       perfect-debounce: 1.0.0
       sirv: 3.0.1
       unplugin-utils: 0.2.5
-      vite: 7.1.1(yaml@2.8.1)
-      vite-dev-rpc: 1.1.0(vite@7.1.1(yaml@2.8.1))
+      vite: 7.1.1(@types/node@24.2.1)(yaml@2.8.1)
+      vite-dev-rpc: 1.1.0(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))
     transitivePeerDependencies:
       - supports-color
 
-  vite@7.1.1(yaml@2.8.1):
+  vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1):
     dependencies:
       esbuild: 0.25.8
       fdir: 6.4.6(picomatch@4.0.3)
@@ -2973,12 +2988,13 @@ snapshots:
       rollup: 4.46.2
       tinyglobby: 0.2.14
     optionalDependencies:
+      '@types/node': 24.2.1
       fsevents: 2.3.3
       yaml: 2.8.1
 
-  vitefu@1.1.1(vite@7.1.1(yaml@2.8.1)):
+  vitefu@1.1.1(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1)):
     optionalDependencies:
-      vite: 7.1.1(yaml@2.8.1)
+      vite: 7.1.1(@types/node@24.2.1)(yaml@2.8.1)
 
   wsl-utils@0.1.0:
     dependencies:
