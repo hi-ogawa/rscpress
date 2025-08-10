@@ -1,19 +1,19 @@
 import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-aware-processors";
-import { VFile } from "vfile";
-import remarkGfm from "remark-gfm";
-import remarkDirective from "remark-directive";
-import remarkFrontmatter from "remark-frontmatter";
-import remarkMdxFrontmatter from "remark-mdx-frontmatter";
-import { createHighlighterCore } from "shiki/core";
-import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import rehypeShikiFromHighlighter, {
 	type RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
-import type { ShikiTransformer } from "shiki";
-import type { Plugin } from "vite";
-import { visit } from "unist-util-visit";
-import type { Root } from "mdast";
 import { h } from "hastscript";
+import type { Root } from "mdast";
+import remarkDirective from "remark-directive";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkGfm from "remark-gfm";
+import remarkMdxFrontmatter from "remark-mdx-frontmatter";
+import type { ShikiTransformer } from "shiki";
+import { createHighlighterCore } from "shiki/core";
+import { createOnigurumaEngine } from "shiki/engine/oniguruma";
+import { visit } from "unist-util-visit";
+import { VFile } from "vfile";
+import type { Plugin } from "vite";
 
 export function markdownPlugin(): Plugin[] {
 	// https://github.com/mdx-js/mdx/blob/2b3381a8962dc888c0f2ed181cf80c6a1140b662/packages/rollup/lib/index.js

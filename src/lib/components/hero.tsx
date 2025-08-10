@@ -1,5 +1,5 @@
-import type { HeroConfig } from "./home";
 import { VPButton } from "./button";
+import type { HeroConfig } from "./home";
 import "./hero.css";
 
 export function Hero(props: HeroConfig) {

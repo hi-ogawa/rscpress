@@ -10,7 +10,8 @@
 		"preview": "vite preview",
 		"tsc": "tsc -b",
 		"tsc-dev": "tsc -b --watch --preserveWatchOutput",
-		"lint": "biome format --write ."
+		"lint": "biome check --write .",
+		"lint-check": "biome check ."
 	},
 	"dependencies": {
 		"@vitejs/plugin-rsc": "latest",

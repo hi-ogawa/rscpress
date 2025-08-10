@@ -1,14 +1,14 @@
-import rsc from "@vitejs/plugin-rsc";
+import assert from "node:assert";
+import fs from "node:fs";
+import path from "node:path";
+import { Readable } from "node:stream";
+import { pathToFileURL } from "node:url";
 import react from "@vitejs/plugin-react";
+import rsc from "@vitejs/plugin-rsc";
 import { defineConfig, type Plugin, type ResolvedConfig } from "vite";
 import inspect from "vite-plugin-inspect";
-import { markdownPlugin } from "./src/lib/plugins/markdown";
-import path from "node:path";
-import { pathToFileURL } from "node:url";
-import assert from "node:assert";
-import { Readable } from "node:stream";
-import fs from "node:fs";
 import { RSC_POSTFIX } from "./src/lib/framework/shared";
+import { markdownPlugin } from "./src/lib/plugins/markdown";
 
 export default defineConfig((env) => ({
 	plugins: [

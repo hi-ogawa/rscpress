@@ -1,6 +1,6 @@
 import * as ReactServer from "@vitejs/plugin-rsc/rsc";
-import { Root, getStaticPaths } from "../root.tsx";
 import type { RscPayload } from "@vitejs/plugin-rsc/rsc-Cv3XEZqB";
+import { getStaticPaths, Root } from "../root.tsx";
 import { RSC_POSTFIX } from "./shared.tsx";
 
 export { getStaticPaths };

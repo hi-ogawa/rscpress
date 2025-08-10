@@ -1,7 +1,7 @@
 import type React from "react";
+import { Content } from "./components/content";
 import { Nav } from "./components/nav";
 import { Sidebar } from "./components/sidebar";
-import { Content } from "./components/content";
 import "./layout.css";
 
 interface LayoutProps {

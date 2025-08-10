@@ -1,7 +1,7 @@
 import "./styles/index.css";
-import { Layout } from "./layout";
-import { Home } from "./components/home";
 import routeModules from "virtual:rscpress:routes";
+import { Home } from "./components/home";
+import { Layout } from "./layout";
 
 // TODO: ssg 404
 export async function getStaticPaths(): Promise<string[]> {
