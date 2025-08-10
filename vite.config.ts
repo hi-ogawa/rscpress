@@ -5,7 +5,12 @@ import { Readable } from "node:stream";
 import { pathToFileURL } from "node:url";
 import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
-import { defineConfig, type Plugin, type ResolvedConfig } from "vite";
+import {
+	type Connect,
+	defineConfig,
+	type Plugin,
+	type ResolvedConfig,
+} from "vite";
 import inspect from "vite-plugin-inspect";
 import { RSC_POSTFIX } from "./src/lib/framework/shared";
 import { markdownPlugin } from "./src/lib/plugins/markdown";
@@ -63,13 +68,28 @@ export default normalized;
 					path.join(server.config.environments.client.build.outDir, "404.html"),
 					"utf-8",
 				);
-				return () => {
-					server.middlewares.use((_req, res, _next) => {
-						res.statusCode = 404;
-						res.setHeader("Content-Type", "text/html");
-						res.end(notFoundHtml);
-					});
+				const notFoundMiddleware: Connect.NextHandleFunction = (
+					_req,
+					res,
+					_next,
+				) => {
+					res.statusCode = 404;
+					res.setHeader("Content-Type", "text/html");
+					res.end(notFoundHtml);
 				};
+				// patch Vite 404 middleware
+				// https://github.com/vitejs/vite/blob/946831f986cb797009b8178659d2b31f570c44ff/packages/vite/src/node/preview.ts#L268-L269
+				const originalUse = server.middlewares.use;
+				const patchUse = function (this: unknown, ...args: unknown[]) {
+					if (
+						typeof args[0] === "function" &&
+						args[0].name === "vite404Middleware"
+					) {
+						args = [notFoundMiddleware];
+					}
+					originalUse.apply(this, args as any);
+				};
+				server.middlewares.use = patchUse as any;
 			},
 			buildApp: {
 				async handler(builder) {
