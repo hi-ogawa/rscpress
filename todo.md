@@ -20,6 +20,8 @@ no md, mdx support yet. just write react component.
   - tip
   - code block with syntax highlighting
   - snippet
+- we can copy rspress's plugins
+  - https://github.com/web-infra-dev/rspress/tree/main/packages/core/src/node/mdx
 
 # step 3 (MVP)
 
