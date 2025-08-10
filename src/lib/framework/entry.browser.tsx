@@ -4,11 +4,32 @@ import * as ReactDOMClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { RSC_POSTFIX, type RscPayload } from "./shared";
 
+// TODO: scroll restoration
+// TODO: vite transition
+
 async function main() {
 	async function onNavigation() {
 		const url = new URL(window.location.href);
 		url.pathname = url.pathname + RSC_POSTFIX;
-		const payload = await ReactClient.createFromFetch<RscPayload>(fetch(url));
+		let response = await fetch(url, {
+			headers: {
+				accept: "text/x-component",
+			},
+		});
+		if (response.status === 404) {
+			// use ssg-ed 404 payload
+			// TODO: embed it during build?
+			if (import.meta.env.__vite_rsc_build__) {
+				response = await fetch("/404_.rsc");
+			}
+		}
+		if (!response.ok || !response.body) {
+			// TODO: handle network error
+			return;
+		}
+		const payload = await ReactClient.createFromReadableStream<RscPayload>(
+			response.body,
+		);
 		setPayload(payload);
 	}
 

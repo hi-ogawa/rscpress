@@ -1,18 +1,23 @@
 import "./styles/index.css";
 import routeModules from "virtual:rscpress:routes";
 import { Home } from "./components/home";
+import { NotFound } from "./components/not-found";
 import { Layout } from "./layout";
 
-// TODO: ssg 404
 export async function getStaticPaths(): Promise<string[]> {
-	return Object.keys(routeModules);
+	const paths = Object.keys(routeModules);
+	return [...paths, "404"];
 }
 
 export async function Root({ url }: { url: URL }) {
 	let content: React.ReactNode;
 	const routeModuleFn = routeModules[url.pathname];
 	if (!routeModuleFn) {
-		content = <div>Not found</div>;
+		content = (
+			<Layout layout="home">
+				<NotFound />
+			</Layout>
+		);
 	} else {
 		const routeModule = await routeModuleFn();
 		const layout = routeModule.frontmatter?.layout || "doc";

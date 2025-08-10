@@ -59,6 +59,19 @@ export default {
 					};
 				}
 			},
+			configurePreviewServer(server) {
+				const notFoundHtml = fs.readFileSync(
+					path.join(server.config.environments.client.build.outDir, "404.html"),
+					"utf-8",
+				);
+				return () => {
+					server.middlewares.use((_req, res, _next) => {
+						res.statusCode = 404;
+						res.setHeader("Content-Type", "text/html");
+						res.end(notFoundHtml);
+					});
+				};
+			},
 			buildApp: {
 				async handler(builder) {
 					await renderStatic(builder.config);
