@@ -30,34 +30,22 @@ export default defineConfig((env) => ({
 function rscpress(): Plugin[] {
 	return [
 		...markdownPlugin(),
-		{
-			name: "rscpress:routes",
-			resolveId(source) {
-				if (source === "virtual:rscpress:routes") {
-					return "\0" + source;
-				}
-			},
-			load(id) {
-				if (id === "\0virtual:rscpress:routes") {
-					// TODO
-					// const glob = import.meta.glob("/src/example/**/*.{md,mdx}", { query: "?mdx" });
-					return /* js */ `
+		createVirtualPlugin("rscpress:routes", async function () {
+			// TODO: use glob
+			// const glob = import.meta.glob("/src/example/**/*.{md,mdx}", { query: "?mdx" });
+			return /* js */ `
 export default {
 	"/": () => import("/src/example/index.md?mdx"),
 	"/guide/getting-started": () => import("/src/example/guide/getting-started.md?mdx"),
 };
 `;
-				}
-			},
-		},
+		}),
 		{
 			name: "rscpress:ssg",
 			config(_config, env) {
-				if (env.isPreview) {
-					return {
-						appType: "mpa",
-					};
-				}
+				return {
+					appType: env.isPreview ? "mpa" : undefined,
+				};
 			},
 			configurePreviewServer(server) {
 				const notFoundHtml = fs.readFileSync(
@@ -127,4 +115,19 @@ function normalizeHtmlFilePath(p: string) {
 		return p + "index.html";
 	}
 	return p + ".html";
+}
+
+function createVirtualPlugin(name: string, load: Plugin["load"]) {
+	name = "virtual:" + name;
+	return {
+		name: `rscpress:virtual-${name}`,
+		resolveId(source, _importer, _options) {
+			return source === name ? "\0" + name : undefined;
+		},
+		load(id, options) {
+			if (id === "\0" + name) {
+				return (load as Function).apply(this, [id, options]);
+			}
+		},
+	} satisfies Plugin;
 }
