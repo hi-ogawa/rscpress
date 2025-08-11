@@ -44,7 +44,6 @@
 		"shiki": "^3.9.2",
 		"typescript": "^5.9.2",
 		"unified": "^11.0.5",
-		"unist": "^0.0.1",
 		"unist-util-visit": "^5.0.0",
 		"vfile": "^6.0.3",
 		"vite": "^7.0.6",
