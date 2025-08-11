@@ -1,5 +1,6 @@
 import "./styles/index.css";
 import routeModules from "virtual:rscpress:routes";
+import { Client } from "./client";
 import { Home } from "./components/home";
 import { NotFound } from "./components/not-found";
 import { Layout } from "./layout";
@@ -47,7 +48,10 @@ export async function Root({ url }: { url: URL }) {
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<title>Vite + RSC</title>
 			</head>
-			<body>{content}</body>
+			<body>
+				{content}
+				<Client />
+			</body>
 		</html>
 	);
 }

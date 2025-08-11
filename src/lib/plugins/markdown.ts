@@ -86,33 +86,66 @@ function remarkCustom() {
 				node.type === "textDirective"
 			) {
 				if (node.name === "code-group") {
-					// TODO
 					node.data ??= {};
 					node.data.hName = "div";
 					node.data.hProperties = {
 						class: `vp-code-group`,
 					};
+					const metas = node.children.map(
+						(c) => c.type === "code" && c.meta && c.meta.slice(1, -1),
+					) as string[];
+					const id = node.position?.start.offset!;
 					node.children = [
 						{
-							type: "list",
+							type: "html",
+							value: "",
 							data: {
 								hName: "div",
 								hProperties: {
 									class: `tabs`,
 								},
+								hChildren: metas.map((meta, i) => ({
+									type: "element",
+									tagName: "label",
+									properties: {},
+									children: [
+										{ type: "text", value: meta },
+										{
+											type: "element",
+											tagName: "input",
+											properties: {
+												type: "radio",
+												name: `group-${id}`,
+												value: i,
+												defaultChecked: i === 0,
+											},
+											children: [],
+										},
+									],
+								})),
 							},
-							// TODO
-							children: [],
 						},
 						{
-							type: "list",
+							type: "paragraph",
 							data: {
 								hName: "div",
 								hProperties: {
-									class: `vp-code-group-items`,
+									class: `blocks`,
 								},
 							},
-							children: node.children as any,
+							children: node.children.map((c, i) => ({
+								type: "paragraph",
+								data: {
+									hName: "div",
+									hProperties: {
+										class: cls(
+											`code-group-block`,
+											i === 0 && `code-group-block-active`,
+										),
+									},
+								},
+								children: [c],
+							})) as any,
 						},
 					];
 					return;
@@ -131,6 +164,8 @@ function remarkCustom() {
 		});
 	};
 }
+
+const cls = (...args: any[]) => args.filter(Boolean).join(" ");
 
 // https://github.com/vitejs/vite-plugin-vue/blob/06931b1ea2b9299267374cb8eb4db27c0626774a/packages/plugin-vue/src/utils/query.ts#L13
 function parseIdQuery(id: string): {
