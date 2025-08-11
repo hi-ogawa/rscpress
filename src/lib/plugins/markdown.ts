@@ -73,6 +73,8 @@ export function markdownPlugin(): Plugin[] {
 
 				// convert vitepress style directive to remark-directive
 				// "::: code-group" => ":::code-group"
+				// TODO: "">>>snippet" => "::snippet"
+				// TODO: "::: tip" => ":::tip"
 				code = code.replace(/^::: code-group\b/gm, ":::code-group ");
 
 				const file = new VFile({ path: filename, value: code });
@@ -125,6 +127,7 @@ function remarkCustom() {
 										},
 										children: [],
 									},
+									// TODO: title icon https://github.com/yuyinws/vitepress-plugin-group-icons
 									{
 										type: "element",
 										tagName: "label",
@@ -283,6 +286,7 @@ function createVitepressTransformer(): ShikiTransformer[] {
 				};
 
 				if (title && !title.startsWith("code-group:")) {
+					// TODO: title icon https://github.com/yuyinws/vitepress-plugin-group-icons
 					codeBlock = {
 						type: "element",
 						tagName: "div",
