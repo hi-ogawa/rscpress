@@ -68,6 +68,11 @@ export function markdownPlugin(): Plugin[] {
 			async transform(code, id) {
 				const { filename, query } = parseIdQuery(id);
 				if (!("mdx" in query)) return;
+
+				// convert vitepress style directive to remark-directive
+				// "::: code-group" => ":::code-group"
+				code = code.replace(/^::: code-group\b/gm, ":::code-group ");
+
 				const file = new VFile({ path: filename, value: code });
 				const compiled = await processors.process(file);
 				const output = String(compiled.value);
