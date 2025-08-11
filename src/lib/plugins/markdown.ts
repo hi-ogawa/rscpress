@@ -161,6 +161,7 @@ function createVitepressTransformer(): ShikiTransformer[] {
 				this.addClassToHast(node, "vp-code");
 			},
 			root(node) {
+				// TODO: vp-code-block-title via this.options.meta
 				const lang = this.options.lang;
 				node.children = [
 					{
