@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-aware-processors";
 import rehypeShikiFromHighlighter, {
 	type RehypeShikiCoreOptions,
@@ -157,12 +159,21 @@ function remarkCustom() {
 					return;
 				}
 				if (node.name === "snippet") {
-					// TODO
 					const value = (node.children[0] as any)?.value;
 					if (!value) {
-						file.info("Misisng value for '::snippet'");
+						file.info("Invalid 'snippet' directive");
 					}
-					node.children = [];
+					// TODO: use vite resolve and raw loader
+					const file = path.resolve(value);
+					const data = fs.readFileSync(file, "utf-8");
+					node.children = [
+						{
+							type: "code",
+							lang: path.extname(file).slice(1) || "text",
+							meta: `[${path.basename(file)}]`,
+							value: data,
+						},
+					];
 					return;
 				}
 				file.info("Unknown directive: " + node.name);

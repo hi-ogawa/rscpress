@@ -15,3 +15,5 @@ $ yarn add -D vitepress
 ```
 
 :::
+
+::snippet[src/example/snippets/init.ansi]
