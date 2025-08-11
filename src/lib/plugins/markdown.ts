@@ -87,6 +87,34 @@ function remarkCustom() {
 			) {
 				if (node.name === "code-group") {
 					// TODO
+					node.data ??= {};
+					node.data.hName = "div";
+					node.data.hProperties = {
+						class: `vp-code-group`,
+					};
+					node.children = [
+						{
+							type: "list",
+							data: {
+								hName: "div",
+								hProperties: {
+									class: `tabs`,
+								},
+							},
+							// TODO
+							children: [],
+						},
+						{
+							type: "list",
+							data: {
+								hName: "div",
+								hProperties: {
+									class: `vp-code-group-items`,
+								},
+							},
+							children: node.children as any,
+						},
+					];
 					return;
 				}
 				if (node.name === "snippet") {
@@ -142,6 +170,13 @@ function createVitepressTransformer(): ShikiTransformer[] {
 							className: [`language-${lang}`, "vp-adaptive-theme"],
 						},
 						children: [
+							{
+								type: "element",
+								tagName: "button",
+								properties: {
+									className: ["copy"],
+								},
+							},
 							{
 								type: "element",
 								tagName: "span",
