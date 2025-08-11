@@ -2,7 +2,6 @@ import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-
 import rehypeShikiFromHighlighter, {
 	type RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
-import { h } from "hastscript";
 import type { Root } from "mdast";
 import remarkDirective from "remark-directive";
 import remarkFrontmatter from "remark-frontmatter";
@@ -14,6 +13,7 @@ import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import { visit } from "unist-util-visit";
 import { VFile } from "vfile";
 import type { Plugin } from "vite";
+import { remarkContainerSyntax } from "./mdx/remarkPlugins/containerSyntax";
 
 export function markdownPlugin(): Plugin[] {
 	// https://github.com/mdx-js/mdx/blob/2b3381a8962dc888c0f2ed181cf80c6a1140b662/packages/rollup/lib/index.js
@@ -36,6 +36,7 @@ export function markdownPlugin(): Plugin[] {
 				processors = createFormatAwareProcessors({
 					remarkPlugins: [
 						remarkGfm,
+						remarkContainerSyntax,
 						remarkDirective,
 						remarkFrontmatter,
 						remarkMdxFrontmatter,
@@ -75,12 +76,6 @@ export function markdownPlugin(): Plugin[] {
 	];
 }
 
-// https://vitepress.dev/guide/markdown#custom-containers
-const CUSTOM_BLOCKS = ["info", "tip", "warning", "danger", "details"];
-
-// https://vitepress.dev/guide/markdown#github-flavored-alerts
-const GITHUB_ALERTS = ["note", "tip", "important", "warning", "caution"];
-
 function remarkCustom() {
 	return function (tree: Root, file: VFile) {
 		visit(tree, function (node) {
@@ -90,38 +85,6 @@ function remarkCustom() {
 				node.type === "leafDirective" ||
 				node.type === "textDirective"
 			) {
-				if (CUSTOM_BLOCKS.includes(node.name)) {
-					// add custom-block class
-					const data = node.data || (node.data = {});
-					const tagName = "div";
-					data.hName = tagName;
-					data.hProperties = h(tagName, node.attributes || {}).properties;
-					data.hProperties["class"] = `custom-block ${node.name}`;
-					// process label
-					const directiveLabel = node.children[0];
-					let label = node.name.toUpperCase();
-					if (directiveLabel.data && "directiveLabel" in directiveLabel.data) {
-						label = (directiveLabel as any).children[0].value;
-						node.children.shift();
-					}
-					const labelNode = {
-						type: "paragraph",
-						children: [
-							{
-								type: "text",
-								value: label,
-							},
-						],
-						data: {
-							hName: "p",
-							hProperties: {
-								class: "custom-block-title",
-							},
-						},
-					};
-					node.children.unshift(labelNode as any);
-					return;
-				}
 				if (node.name === "code-group") {
 					// TODO
 					return;
@@ -137,10 +100,6 @@ function remarkCustom() {
 				}
 				file.info("Unknown directive: " + node.name);
 			}
-
-			// TODO
-			// https://vitepress.dev/guide/markdown#github-flavored-alerts
-			GITHUB_ALERTS;
 		});
 	};
 }
