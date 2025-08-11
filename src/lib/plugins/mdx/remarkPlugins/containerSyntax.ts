@@ -93,7 +93,7 @@ const createContainer = (
 				data: {
 					hName: titleHName,
 					hProperties: {
-            class: "custom-block-title",
+						class: "custom-block-title",
 					},
 				},
 				children: [{ type: "text", value: title || type.toUpperCase() }],
