@@ -3,11 +3,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { pathToFileURL } from "node:url";
+import react from "@vitejs/plugin-react";
+import rsc, { type RscPluginOptions } from "@vitejs/plugin-rsc";
 import { type Connect, type Plugin, type ResolvedConfig } from "vite";
 import { RSC_POSTFIX } from "../framework/shared";
 import { markdownPlugin } from "./markdown";
-import rsc, { type RscPluginOptions } from "@vitejs/plugin-rsc";
-import react from "@vitejs/plugin-react";
 
 export default function rscpress(): Plugin[] {
 	const rscPluginOptions: RscPluginOptions = {
@@ -17,7 +17,7 @@ export default function rscpress(): Plugin[] {
 			client: "./src/lib/framework/entry.browser.tsx",
 		},
 		useBuildAppHook: true,
-	}
+	};
 
 	return [
 		{
@@ -26,7 +26,7 @@ export default function rscpress(): Plugin[] {
 				if (env.isPreview) {
 					rscPluginOptions.serverHandler = false;
 				}
-			}
+			},
 		},
 		...react(),
 		...rsc(rscPluginOptions),

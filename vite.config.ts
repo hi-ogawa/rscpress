@@ -3,8 +3,5 @@ import inspect from "vite-plugin-inspect";
 import rscpress from "./src/lib/plugins";
 
 export default defineConfig({
-	plugins: [
-		rscpress(),
-		inspect(),
-	],
+	plugins: [rscpress(), inspect()],
 });
