@@ -14,10 +14,7 @@ function setupCodeGroups() {
 		const target = e.target as HTMLElement;
 		if (!target.matches(".vp-code-group .tabs label")) return;
 
-		const input = target.querySelector("input");
-		if (!input) return;
-
-		const group = input.closest(".vp-code-group");
+		const group = target.closest(".vp-code-group");
 		if (!group) return;
 
 		const labels = Array.from(group.querySelectorAll(".tabs label"));
@@ -25,9 +22,9 @@ function setupCodeGroups() {
 
 		group.querySelectorAll(".code-group-block").forEach((block, index) => {
 			if (index === activeIndex) {
-				block.classList.add("code-group-block-active");
+				block.classList.add("active");
 			} else {
-				block.classList.remove("code-group-block-active");
+				block.classList.remove("active");
 			}
 		});
 

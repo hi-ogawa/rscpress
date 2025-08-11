@@ -262,6 +262,7 @@ function createVitepressTransformer(): ShikiTransformer[] {
 						className: [
 							`language-${lang}`,
 							"vp-adaptive-theme",
+							title.startsWith("code-group:") && "code-group-block",
 							title.startsWith("code-group:0:") && "active",
 						].filter(Boolean),
 					},
