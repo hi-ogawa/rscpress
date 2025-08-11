@@ -170,7 +170,8 @@ function remarkCustom() {
 						{
 							type: "code",
 							lang: path.extname(file).slice(1) || "text",
-							meta: `[${path.basename(file)}]`,
+							// TODO: meta
+							// meta: `[${path.basename(file)}]`,
 							value: data,
 						},
 					];
@@ -242,35 +243,73 @@ function createVitepressTransformer(): ShikiTransformer[] {
 				this.addClassToHast(node, "vp-code");
 			},
 			root(node) {
-				// TODO: vp-code-block-title via this.options.meta
 				const lang = this.options.lang;
-				node.children = [
-					{
+				const title = this.options.meta.__raw?.slice(1, -1);
+
+				// div.vp-code-block-title
+				//   div.vp-code-block-title-bar
+				//     span.vp-code-block-title-text
+				//        {title}
+				//   div.language-<lang>
+				//     {...}
+
+				let codeBlock = {
+					type: "element",
+					tagName: "div",
+					properties: {
+						className: [`language-${lang}`, "vp-adaptive-theme"],
+					},
+					children: [
+						{
+							type: "element",
+							tagName: "button",
+							properties: {
+								className: ["copy"],
+							},
+						},
+						{
+							type: "element",
+							tagName: "span",
+							properties: {
+								className: ["lang"],
+							},
+							children: [{ type: "text", value: lang || "text" }],
+						},
+						...(node.children as any),
+					],
+				};
+
+				if (title) {
+					codeBlock = {
 						type: "element",
 						tagName: "div",
 						properties: {
-							className: [`language-${lang}`, "vp-adaptive-theme"],
+							className: ["vp-code-block-title"],
 						},
 						children: [
 							{
 								type: "element",
-								tagName: "button",
+								tagName: "div",
 								properties: {
-									className: ["copy"],
+									className: ["vp-code-block-title-bar"],
 								},
+								children: [
+									{
+										type: "element",
+										tagName: "span",
+										properties: {
+											className: ["vp-code-block-title-text"],
+										},
+										children: [{ type: "text", value: title }],
+									},
+								],
 							},
-							{
-								type: "element",
-								tagName: "span",
-								properties: {
-									className: ["lang"],
-								},
-								children: [{ type: "text", value: lang || "text" }],
-							},
-							...(node.children as any),
+							codeBlock,
 						],
-					},
-				];
+					};
+				}
+
+				node.children = [codeBlock];
 			},
 		},
 	];
