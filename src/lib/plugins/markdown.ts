@@ -112,25 +112,28 @@ function remarkCustom() {
 								hProperties: {
 									class: `tabs`,
 								},
-								hChildren: metas.map((meta, i) => ({
-									type: "element",
-									tagName: "label",
-									properties: {},
-									children: [
-										{ type: "text", value: meta },
-										{
-											type: "element",
-											tagName: "input",
-											properties: {
-												type: "radio",
-												name: `group-${id}`,
-												value: i,
-												defaultChecked: i === 0,
-											},
-											children: [],
+								hChildren: metas.flatMap((meta, i) => [
+									{
+										type: "element",
+										tagName: "input",
+										properties: {
+											type: "radio",
+											name: `group-${id}`,
+											id: `group-${id}:${i}`,
+											value: i,
+											defaultChecked: i === 0,
 										},
-									],
-								})),
+										children: [],
+									},
+									{
+										type: "element",
+										tagName: "label",
+										properties: {
+											for: `group-${id}:${i}`,
+										},
+										children: [{ type: "text", value: meta }],
+									},
+								]),
 							},
 						},
 						{
@@ -142,17 +145,12 @@ function remarkCustom() {
 								},
 							},
 							children: node.children.map((c, i) => ({
-								type: "paragraph",
-								data: {
-									hName: "div",
-									hProperties: {
-										class: cls(
-											`code-group-block`,
-											i === 0 && `code-group-block-active`,
-										),
-									},
-								},
-								children: [c],
+								...c,
+								// pass metadata to code block
+								meta: c.meta.replace(
+									/\[.*\]/g,
+									(m) => `[code-group:${i}:${m.slice(1, -1)}]`,
+								),
 							})) as any,
 						},
 					];
@@ -244,7 +242,8 @@ function createVitepressTransformer(): ShikiTransformer[] {
 			},
 			root(node) {
 				const lang = this.options.lang;
-				const title = this.options.meta.__raw?.slice(1, -1);
+				const raw = this.options.meta.__raw || "";
+				const title = raw.match(/\[(.*)\]/)?.[1] || "";
 
 				// div.vp-code-block-title
 				//   div.vp-code-block-title-bar
@@ -257,7 +256,11 @@ function createVitepressTransformer(): ShikiTransformer[] {
 					type: "element",
 					tagName: "div",
 					properties: {
-						className: [`language-${lang}`, "vp-adaptive-theme"],
+						className: [
+							`language-${lang}`,
+							"vp-adaptive-theme",
+							title.startsWith("code-group:0:") && "active",
+						].filter(Boolean),
 					},
 					children: [
 						{
@@ -279,7 +282,7 @@ function createVitepressTransformer(): ShikiTransformer[] {
 					],
 				};
 
-				if (title) {
+				if (title && !title.startsWith("code-group:")) {
 					codeBlock = {
 						type: "element",
 						tagName: "div",
