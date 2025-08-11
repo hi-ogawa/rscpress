@@ -1,5 +1,29 @@
 import "./doc-aside-outline.css";
 
+type OutlineItem = {
+	text: string;
+	link: string;
+	level?: number;
+};
+
+const outlineItems: OutlineItem[] = [
+	{ text: "Try It Online", link: "#try-it-online" },
+	{ text: "Installation", link: "#installation" },
+	{ text: "File Structure", link: "#file-structure" },
+	{ text: "Up and Running", link: "#up-and-running" },
+	{ text: "What's Next?", link: "#whats-next" },
+];
+
+function OutlineLink({ item }: { item: OutlineItem }) {
+	return (
+		<li className="outline-item">
+			<a href={item.link} className="outline-link">
+				{item.text}
+			</a>
+		</li>
+	);
+}
+
 export function DocAsideOutline() {
 	return (
 		<div className="aside">
@@ -8,31 +32,9 @@ export function DocAsideOutline() {
 					<nav className="outline">
 						<div className="outline-title">On this page</div>
 						<ul className="outline-list">
-							<li className="outline-item">
-								<a href="#try-it-online" className="outline-link">
-									Try It Online
-								</a>
-							</li>
-							<li className="outline-item">
-								<a href="#installation" className="outline-link">
-									Installation
-								</a>
-							</li>
-							<li className="outline-item">
-								<a href="#file-structure" className="outline-link">
-									File Structure
-								</a>
-							</li>
-							<li className="outline-item">
-								<a href="#up-and-running" className="outline-link">
-									Up and Running
-								</a>
-							</li>
-							<li className="outline-item">
-								<a href="#whats-next" className="outline-link">
-									What's Next?
-								</a>
-							</li>
+							{outlineItems.map((item, index) => (
+								<OutlineLink key={index} item={item} />
+							))}
 						</ul>
 					</nav>
 				</div>
