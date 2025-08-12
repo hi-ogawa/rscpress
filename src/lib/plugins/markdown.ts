@@ -27,7 +27,10 @@ export function markdownPlugin(): Plugin[] {
 			name: "rscpress:mdx",
 			async config() {
 				highlighter = await createHighlighterCore({
-					themes: [import("@shikijs/themes/github-light")],
+					themes: [
+						import("@shikijs/themes/github-light"),
+						import("@shikijs/themes/github-dark"),
+					],
 					langs: [
 						import("@shikijs/langs/json"),
 						import("@shikijs/langs/javascript"),
@@ -53,6 +56,7 @@ export function markdownPlugin(): Plugin[] {
 							{
 								themes: {
 									light: "github-light",
+									dark: "github-dark",
 								},
 								addLanguageClass: true,
 								defaultLanguage: "text",
