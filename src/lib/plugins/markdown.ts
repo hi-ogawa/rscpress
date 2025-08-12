@@ -118,6 +118,7 @@ function remarkCustom() {
 					const titles = codes.map(
 						(c) => (c.type === "code" && c.meta && getCodeTitle(c.meta)) || "",
 					);
+					// code-title-icon-
 					const id = node.position?.start.offset!;
 					node.children = [
 						{
@@ -147,6 +148,7 @@ function remarkCustom() {
 										tagName: "label",
 										properties: {
 											for: `group-${id}:${i}`,
+											className: [`code-title-icon-${title}`],
 										},
 										children: [{ type: "text", value: title }],
 									},
@@ -298,7 +300,10 @@ function createVitepressTransformer(): ShikiTransformer[] {
 										type: "element",
 										tagName: "span",
 										properties: {
-											className: ["vp-code-block-title-text"],
+											className: [
+												"vp-code-block-title-text",
+												`code-title-icon-${title}`,
+											],
 										},
 										children: [{ type: "text", value: title }],
 									},
