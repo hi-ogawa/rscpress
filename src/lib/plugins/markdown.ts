@@ -27,8 +27,12 @@ export function markdownPlugin(): Plugin[] {
 			name: "rscpress:mdx",
 			async config() {
 				highlighter = await createHighlighterCore({
-					themes: [import("@shikijs/themes/github-light")],
+					themes: [
+						import("@shikijs/themes/github-light"),
+						import("@shikijs/themes/github-dark"),
+					],
 					langs: [
+						// TODO: warning if used language is not loaded
 						import("@shikijs/langs/json"),
 						import("@shikijs/langs/javascript"),
 						import("@shikijs/langs/shell"),
@@ -53,7 +57,9 @@ export function markdownPlugin(): Plugin[] {
 							{
 								themes: {
 									light: "github-light",
+									dark: "github-dark",
 								},
+								defaultColor: false,
 								addLanguageClass: true,
 								defaultLanguage: "text",
 								transformers: createVitepressTransformer(),
@@ -248,7 +254,6 @@ function createVitepressTransformer(): ShikiTransformer[] {
 					properties: {
 						className: [
 							`language-${lang}`,
-							"vp-adaptive-theme",
 							title.startsWith("code-group:") && "code-group-block",
 							title.startsWith("code-group:0:") && "active",
 						].filter(Boolean),
