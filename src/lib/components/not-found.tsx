@@ -1,5 +1,3 @@
-import "./not-found.css";
-
 export interface NotFoundProps {
 	code?: string;
 	title?: string;
@@ -18,16 +16,26 @@ export function NotFound({
 	linkLabel = "go to home",
 }: NotFoundProps) {
 	return (
-		<div className="NotFound">
-			<p className="code">{code}</p>
-			<h1 className="title">{title}</h1>
-			<div className="divider" />
-			<blockquote className="quote">{quote}</blockquote>
+		<div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
+			<div className="max-w-md w-full text-center">
+				<div className="mb-8">
+					<h1 className="text-9xl font-bold text-gray-300 mb-4">{code}</h1>
+					<h2 className="text-2xl font-bold text-gray-900 mb-4">{title}</h2>
+					<div className="w-12 h-px bg-gray-300 mx-auto mb-8"></div>
+					<blockquote className="text-gray-600 italic text-lg leading-relaxed mb-8">
+						{quote}
+					</blockquote>
+				</div>
 
-			<div className="action">
-				<a className="link" href={linkHref} aria-label={linkLabel}>
-					{linkText}
-				</a>
+				<div>
+					<a
+						href={linkHref}
+						aria-label={linkLabel}
+						className="btn btn-primary text-lg px-8 py-3"
+					>
+						{linkText}
+					</a>
+				</div>
 			</div>
 		</div>
 	);

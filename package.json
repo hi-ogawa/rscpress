@@ -15,9 +15,12 @@
 		"lint-check": "biome check ."
 	},
 	"dependencies": {
+		"@tailwindcss/vite": "^4.1.11",
 		"@vitejs/plugin-rsc": "latest",
+		"daisyui": "^5.0.50",
 		"react": "^19.1.1",
-		"react-dom": "^19.1.1"
+		"react-dom": "^19.1.1",
+		"tailwindcss": "^4.1.11"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.1.4",

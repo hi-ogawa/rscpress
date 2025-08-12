@@ -1,5 +1,3 @@
-import "./doc-aside-outline.css";
-
 type OutlineItem = {
 	text: string;
 	link: string;
@@ -16,8 +14,11 @@ const outlineItems: OutlineItem[] = [
 
 function OutlineLink({ item }: { item: OutlineItem }) {
 	return (
-		<li className="outline-item">
-			<a href={item.link} className="outline-link">
+		<li>
+			<a
+				href={item.link}
+				className="block py-1 text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200 border-l-2 border-transparent hover:border-gray-300 pl-3"
+			>
 				{item.text}
 			</a>
 		</li>
@@ -26,19 +27,19 @@ function OutlineLink({ item }: { item: OutlineItem }) {
 
 export function DocAsideOutline() {
 	return (
-		<div className="aside">
-			<div className="aside-container">
-				<div className="aside-content">
-					<nav className="outline">
-						<div className="outline-title">On this page</div>
-						<ul className="outline-list">
-							{outlineItems.map((item, index) => (
-								<OutlineLink key={index} item={item} />
-							))}
-						</ul>
-					</nav>
-				</div>
+		<aside className="hidden xl:block w-64 flex-shrink-0">
+			<div className="sticky top-20 py-8 pr-8">
+				<nav>
+					<h4 className="text-sm font-semibold text-gray-900 mb-4">
+						On this page
+					</h4>
+					<ul className="space-y-2">
+						{outlineItems.map((item, index) => (
+							<OutlineLink key={index} item={item} />
+						))}
+					</ul>
+				</nav>
 			</div>
-		</div>
+		</aside>
 	);
 }
