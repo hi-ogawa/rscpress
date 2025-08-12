@@ -16,7 +16,7 @@ export function Features({ features }: FeaturesProps) {
 	const gridClass = getGridClass(features.length);
 
 	return (
-		<section className="py-20 bg-white">
+		<section className="py-20" style={{ backgroundColor: "var(--vp-c-bg)" }}>
 			<div className="container mx-auto px-4 sm:px-6 lg:px-8">
 				<div className={`grid grid-cols-1 ${gridClass} gap-8`}>
 					{features.map((feature, index) => (
@@ -34,7 +34,13 @@ function Feature({ icon, title, details, link }: FeatureConfig) {
 			<div className="card-body p-8 text-center">
 				{icon && (
 					<div className="flex justify-center mb-6">
-						<div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-2xl">
+						<div
+							className="w-16 h-16 rounded-full flex items-center justify-center text-2xl"
+							style={{
+								backgroundColor: "var(--vp-c-brand-soft)",
+								color: "var(--vp-c-brand-1)",
+							}}
+						>
 							{/* Support both text icons and HTML/SVG */}
 							{icon.startsWith("<") ? (
 								<div dangerouslySetInnerHTML={{ __html: icon }} />
@@ -44,10 +50,23 @@ function Feature({ icon, title, details, link }: FeatureConfig) {
 						</div>
 					</div>
 				)}
-				<h3 className="text-xl font-bold text-gray-900 mb-4">{title}</h3>
-				<p className="text-gray-600 mb-6 leading-relaxed">{details}</p>
+				<h3
+					className="text-xl font-bold mb-4"
+					style={{ color: "var(--vp-c-text-1)" }}
+				>
+					{title}
+				</h3>
+				<p
+					className="mb-6 leading-relaxed"
+					style={{ color: "var(--vp-c-text-2)" }}
+				>
+					{details}
+				</p>
 				{link && (
-					<div className="flex items-center justify-center text-blue-600 font-medium hover:text-blue-700 transition-colors">
+					<div
+						className="flex items-center justify-center font-medium transition-colors"
+						style={{ color: "var(--vp-c-brand-1)" }}
+					>
 						<span>Learn more</span>
 						<svg
 							className="ml-2 w-4 h-4"
@@ -64,18 +83,11 @@ function Feature({ icon, title, details, link }: FeatureConfig) {
 
 	if (link) {
 		return (
-			<a
-				href={link}
-				className="block transform hover:scale-105 transition-transform duration-200 hover:shadow-lg"
-			>
+			<a href={link} className="block transition-colors">
 				{content}
 			</a>
 		);
 	}
 
-	return (
-		<div className="transform hover:scale-105 transition-transform duration-200">
-			{content}
-		</div>
-	);
+	return <div>{content}</div>;
 }

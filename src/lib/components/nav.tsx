@@ -3,14 +3,10 @@ interface NavProps {
 }
 
 export function Nav({ isHome = false }: NavProps) {
-	// Use Tailwind classes for modern, clean styling
+	// Use VitePress variables for consistent theming
 	const navClasses = `
-		${
-			isHome
-				? "bg-transparent border-b border-transparent"
-				: "bg-white border-b border-gray-200"
-		} 
-		fixed top-0 left-0 right-0 z-50 transition-all duration-300
+		${isHome ? "bg-transparent border-b border-transparent" : "navbar"} 
+		fixed top-0 left-0 right-0 z-50 transition-colors
 	`.trim();
 
 	return (
@@ -22,7 +18,12 @@ export function Nav({ isHome = false }: NavProps) {
 						<div className="flex-shrink-0">
 							<a
 								href="/"
-								className="flex items-center h-16 text-lg font-semibold text-gray-900 hover:text-gray-600 transition-colors duration-200 no-underline"
+								className="flex items-center h-16 text-lg font-semibold transition-colors no-underline"
+								style={{
+									color: "var(--vp-c-text-1)",
+									fontSize: "inherit",
+									lineHeight: "inherit",
+								}}
 							>
 								RscPress
 							</a>
@@ -40,7 +41,10 @@ export function Nav({ isHome = false }: NavProps) {
 				{/* Divider for non-home pages */}
 				{!isHome && (
 					<div className="px-4 sm:px-8">
-						<div className="w-full h-px bg-gray-200"></div>
+						<div
+							className="w-full h-px"
+							style={{ backgroundColor: "var(--vp-c-divider)" }}
+						></div>
 					</div>
 				)}
 			</nav>
