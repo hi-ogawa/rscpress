@@ -32,6 +32,7 @@ export function markdownPlugin(): Plugin[] {
 						import("@shikijs/themes/github-dark"),
 					],
 					langs: [
+						// TODO: warning if used language is not loaded
 						import("@shikijs/langs/json"),
 						import("@shikijs/langs/javascript"),
 						import("@shikijs/langs/shell"),
@@ -253,7 +254,6 @@ function createVitepressTransformer(): ShikiTransformer[] {
 					properties: {
 						className: [
 							`language-${lang}`,
-							// "vp-adaptive-theme",
 							title.startsWith("code-group:") && "code-group-block",
 							title.startsWith("code-group:0:") && "active",
 						].filter(Boolean),
