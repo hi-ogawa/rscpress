@@ -27,8 +27,6 @@ function setupCodeGroups() {
 				block.classList.remove("active");
 			}
 		});
-
-		e.preventDefault();
 	}
 
 	document.addEventListener("click", onClick);
