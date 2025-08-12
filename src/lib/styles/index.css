@@ -1,8 +1,9 @@
-@import "./base.css";
+/* Import VitePress foundational styles */
 @import "./vars.css";
-@import "./vp-doc.css";
+@import "./base.css";
+
+/* Import specific styling for content that needs to be preserved */
 @import "./vp-code.css";
 @import "./custom-block.css";
 @import "./code-block-title.css";
 @import "./vp-code-group.css";
-@import "./icons.css";

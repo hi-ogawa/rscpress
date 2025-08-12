@@ -1,7 +1,6 @@
 import type React from "react";
 import { Features } from "./features";
 import { Hero } from "./hero";
-import "./home.css";
 
 export interface HomeProps {
 	children?: React.ReactNode;
@@ -32,15 +31,15 @@ export function Home(props: HomeProps) {
 	const { children, hero, features } = props;
 
 	return (
-		<div className="VPHome">
+		<div className="min-h-screen">
 			{hero && <Hero {...hero} />}
 			{features && features.length > 0 && <Features features={features} />}
 			{children && (
-				<div className="VPHomeContent">
-					<div className="container">
-						<div className="vp-doc">{children}</div>
+				<section className="py-20 bg-gray-50">
+					<div className="container mx-auto px-4 sm:px-6 lg:px-8">
+						<div className="prose prose-lg max-w-4xl mx-auto">{children}</div>
 					</div>
-				</div>
+				</section>
 			)}
 		</div>
 	);

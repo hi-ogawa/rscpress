@@ -1,3 +1,4 @@
+import "./styles.css";
 import "./styles/index.css";
 import routeModules from "virtual:rscpress:routes";
 import { Client } from "./client";

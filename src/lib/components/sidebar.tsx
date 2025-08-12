@@ -1,5 +1,3 @@
-import "./sidebar.css";
-
 type SidebarItem = {
 	text?: string;
 	link?: string;
@@ -48,7 +46,11 @@ function SidebarItem({
 		<li>
 			<a
 				href={item.link}
-				className={`sidebar-link ${isActive ? "active" : ""}`}
+				className={`block px-3 py-2 text-sm rounded-md transition-colors duration-200 ${
+					isActive
+						? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
+						: "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+				}`}
 			>
 				{item.text}
 			</a>
@@ -67,9 +69,13 @@ function SidebarGroup({ item }: { item: SidebarItem }) {
 	}
 
 	return (
-		<div className="sidebar-group">
-			{item.text && <h5>{item.text}</h5>}
-			<ul className="sidebar-links">
+		<div className="mb-6">
+			{item.text && (
+				<h5 className="px-3 mb-3 text-xs font-semibold text-gray-900 uppercase tracking-wider">
+					{item.text}
+				</h5>
+			)}
+			<ul className="space-y-1">
 				{item.items.map((subItem, index) => (
 					<SidebarItem
 						key={index}
@@ -84,12 +90,14 @@ function SidebarGroup({ item }: { item: SidebarItem }) {
 
 export function Sidebar() {
 	return (
-		<aside className="VPSidebar">
-			<nav>
-				{sidebarConfig.map((item, index) => (
-					<SidebarGroup key={index} item={item} />
-				))}
-			</nav>
+		<aside className="drawer-side">
+			<div className="w-64 min-h-screen bg-white border-r border-gray-200">
+				<nav className="p-4 pt-20">
+					{sidebarConfig.map((item, index) => (
+						<SidebarGroup key={index} item={item} />
+					))}
+				</nav>
+			</div>
 		</aside>
 	);
 }
