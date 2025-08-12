@@ -71,7 +71,7 @@ $ bun vitepress init
 
 You will be greeted with a few simple questions:
 
-::snippet[/src/example/snippets/init.ansi]
+::snippet[src/example/snippets/init.ansi]
 
 ::: tip Vue as Peer Dependency
 If you intend to perform customization that uses Vue components or APIs, you should also explicitly install `vue` as a dependency.

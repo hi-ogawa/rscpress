@@ -1,8 +1,10 @@
+import fs from "node:fs";
+import path from "node:path";
 import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-aware-processors";
 import rehypeShikiFromHighlighter, {
 	type RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
-import type { Root } from "mdast";
+import type { Code, Root } from "mdast";
 import remarkDirective from "remark-directive";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
@@ -34,6 +36,7 @@ export function markdownPlugin(): Plugin[] {
 					engine: createOnigurumaEngine(() => import("shiki/wasm")),
 				});
 				processors = createFormatAwareProcessors({
+					format: "mdx",
 					remarkPlugins: [
 						remarkGfm,
 						remarkContainerSyntax,
@@ -67,6 +70,13 @@ export function markdownPlugin(): Plugin[] {
 			async transform(code, id) {
 				const { filename, query } = parseIdQuery(id);
 				if (!("mdx" in query)) return;
+
+				// convert vitepress style directive to remark-directive
+				// "::: code-group" => ":::code-group"
+				// TODO: "">>>snippet" => "::snippet"
+				// TODO: "::: tip" => ":::tip"
+				code = code.replace(/^::: code-group\b/gm, ":::code-group ");
+
 				const file = new VFile({ path: filename, value: code });
 				const compiled = await processors.process(file);
 				const output = String(compiled.value);
@@ -86,22 +96,110 @@ function remarkCustom() {
 				node.type === "textDirective"
 			) {
 				if (node.name === "code-group") {
-					// TODO
+					node.data ??= {};
+					node.data.hName = "div";
+					node.data.hProperties = {
+						class: `vp-code-group`,
+					};
+					const codes: Code[] = [];
+					for (const c of node.children) {
+						if (c.type !== "code") {
+							file.info("Code group must contain only code blocks");
+							continue;
+						}
+						codes.push(c);
+					}
+					const titles = codes.map(
+						(c) => (c.type === "code" && c.meta && getCodeTitle(c.meta)) || "",
+					);
+					const id = node.position?.start.offset!;
+					node.children = [
+						{
+							type: "html",
+							value: "",
+							data: {
+								hName: "div",
+								hProperties: {
+									class: `tabs`,
+								},
+								hChildren: titles.flatMap((title, i) => [
+									{
+										type: "element",
+										tagName: "input",
+										properties: {
+											type: "radio",
+											name: `group-${id}`,
+											id: `group-${id}:${i}`,
+											value: i,
+											defaultChecked: i === 0,
+										},
+										children: [],
+									},
+									// TODO: title icon https://github.com/yuyinws/vitepress-plugin-group-icons
+									{
+										type: "element",
+										tagName: "label",
+										properties: {
+											for: `group-${id}:${i}`,
+										},
+										children: [{ type: "text", value: title }],
+									},
+								]),
+							},
+						},
+						{
+							type: "paragraph",
+							data: {
+								hName: "div",
+								hProperties: {
+									class: `blocks`,
+								},
+							},
+							children: codes.map((c, i) => ({
+								...c,
+								// pass metadata to code block
+								meta: c.meta?.replace(
+									CODE_TITLE_RE,
+									(_, m) => `[code-group:${i}:${m}]`,
+								),
+							})) as any,
+						},
+					];
 					return;
 				}
 				if (node.name === "snippet") {
-					// TODO
 					const value = (node.children[0] as any)?.value;
 					if (!value) {
-						file.info("Misisng value for '::snippet'");
+						file.info("Invalid 'snippet' directive");
 					}
-					node.children = [];
+					// TODO: use vite resolve and raw loader
+					const filePath = path.resolve(value);
+					const data = fs.readFileSync(filePath, "utf-8");
+					node.children = [
+						{
+							type: "code",
+							lang: path.extname(filePath).slice(1) || "text",
+							// TODO: meta
+							// meta: `[${path.basename(file)}]`,
+							value: data,
+						},
+					];
 					return;
 				}
 				file.info("Unknown directive: " + node.name);
 			}
 		});
 	};
+}
+
+const CODE_TITLE_RE = /\[([^\]]+)\]/;
+
+function getCodeTitle(s: string): string {
+	const match = s.match(CODE_TITLE_RE);
+	if (match) {
+		return match[1];
+	}
+	return "";
 }
 
 // https://github.com/vitejs/vite-plugin-vue/blob/06931b1ea2b9299267374cb8eb4db27c0626774a/packages/plugin-vue/src/utils/query.ts#L13
@@ -134,26 +232,79 @@ function createVitepressTransformer(): ShikiTransformer[] {
 			},
 			root(node) {
 				const lang = this.options.lang;
-				node.children = [
-					{
+				const raw = this.options.meta?.__raw || "";
+				const title = getCodeTitle(raw) || "";
+
+				// div.vp-code-block-title
+				//   div.vp-code-block-title-bar
+				//     span.vp-code-block-title-text
+				//        {title}
+				//   div.language-<lang>
+				//     {...}
+
+				let codeBlock = {
+					type: "element",
+					tagName: "div",
+					properties: {
+						className: [
+							`language-${lang}`,
+							"vp-adaptive-theme",
+							title.startsWith("code-group:") && "code-group-block",
+							title.startsWith("code-group:0:") && "active",
+						].filter(Boolean),
+					},
+					children: [
+						{
+							type: "element",
+							tagName: "button",
+							properties: {
+								className: ["copy"],
+							},
+						},
+						{
+							type: "element",
+							tagName: "span",
+							properties: {
+								className: ["lang"],
+							},
+							children: [{ type: "text", value: lang || "text" }],
+						},
+						...(node.children as any),
+					],
+				};
+
+				if (title && !title.startsWith("code-group:")) {
+					// TODO: title icon https://github.com/yuyinws/vitepress-plugin-group-icons
+					codeBlock = {
 						type: "element",
 						tagName: "div",
 						properties: {
-							className: [`language-${lang}`, "vp-adaptive-theme"],
+							className: ["vp-code-block-title"],
 						},
 						children: [
 							{
 								type: "element",
-								tagName: "span",
+								tagName: "div",
 								properties: {
-									className: ["lang"],
+									className: ["vp-code-block-title-bar"],
 								},
-								children: [{ type: "text", value: lang || "text" }],
+								children: [
+									{
+										type: "element",
+										tagName: "span",
+										properties: {
+											className: ["vp-code-block-title-text"],
+										},
+										children: [{ type: "text", value: title }],
+									},
+								],
 							},
-							...(node.children as any),
+							codeBlock,
 						],
-					},
-				];
+					};
+				}
+
+				node.children = [codeBlock] as any;
 			},
 		},
 	];
