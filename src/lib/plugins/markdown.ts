@@ -15,6 +15,7 @@ import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import { visit } from "unist-util-visit";
 import { VFile } from "vfile";
 import type { Plugin } from "vite";
+import { getCodeTitleIconClass } from "./code-title-icon/utils";
 import { remarkContainerSyntax } from "./mdx/remarkPlugins/containerSyntax";
 
 export function markdownPlugin(): Plugin[] {
@@ -118,7 +119,6 @@ function remarkCustom() {
 					const titles = codes.map(
 						(c) => (c.type === "code" && c.meta && getCodeTitle(c.meta)) || "",
 					);
-					// code-title-icon-
 					const id = node.position?.start.offset!;
 					node.children = [
 						{
@@ -142,13 +142,12 @@ function remarkCustom() {
 										},
 										children: [],
 									},
-									// TODO: title icon https://github.com/yuyinws/vitepress-plugin-group-icons
 									{
 										type: "element",
 										tagName: "label",
 										properties: {
 											for: `group-${id}:${i}`,
-											className: [`code-title-icon-${title}`],
+											className: [getCodeTitleIconClass(title) || ""],
 										},
 										children: [{ type: "text", value: title }],
 									},
@@ -281,7 +280,6 @@ function createVitepressTransformer(): ShikiTransformer[] {
 				};
 
 				if (title && !title.startsWith("code-group:")) {
-					// TODO: title icon https://github.com/yuyinws/vitepress-plugin-group-icons
 					codeBlock = {
 						type: "element",
 						tagName: "div",
@@ -302,7 +300,7 @@ function createVitepressTransformer(): ShikiTransformer[] {
 										properties: {
 											className: [
 												"vp-code-block-title-text",
-												`code-title-icon-${title}`,
+												getCodeTitleIconClass(title) || "",
 											],
 										},
 										children: [{ type: "text", value: title }],
