@@ -189,35 +189,6 @@ function remarkCustom() {
 				file.info("Unknown directive: " + node.name);
 			}
 		});
-
-		// https://github.com/web-infra-dev/rspress/blob/498ef224dc461570aa1859dc315e84aacac99648/packages/core/src/node/utils/getASTNodeImport.ts
-		tree.children.unshift({
-			type: "mdxjsEsm",
-			value: `import * as components from ${JSON.stringify("/src/lib/components.tsx")}`,
-			data: {
-				estree: {
-					type: "Program",
-					sourceType: "module",
-					body: [
-						{
-							type: "ImportDeclaration",
-							specifiers: [
-								{
-									type: "ImportNamespaceSpecifier",
-									local: { type: "Identifier", name: "components" },
-								},
-							],
-							source: {
-								type: "Literal",
-								value: "/src/lib/components.tsx",
-								raw: JSON.stringify("/src/lib/components.tsx"),
-							},
-							attributes: [],
-						},
-					],
-				},
-			},
-		});
 	};
 }
 

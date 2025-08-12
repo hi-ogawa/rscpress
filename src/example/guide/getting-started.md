@@ -6,20 +6,6 @@ You can try VitePress directly in your browser on [StackBlitz](https://vitepress
 
 ## Installation
 
-<components.TestBuiltin test="ok" />
-
-<components.CodeGroup blocks={{ npm: "foo", pnpm: "bar" }}>
-
-```sh [npm]
-$ npm add -D vitepress
-```
-
-```sh [pnpm]
-$ pnpm add -D vitepress
-```
-
-</components.CodeGroup>
-
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) version 18 or higher.
