@@ -58,6 +58,7 @@ export function markdownPlugin(): Plugin[] {
 									light: "github-light",
 									dark: "github-dark",
 								},
+								defaultColor: false,
 								addLanguageClass: true,
 								defaultLanguage: "text",
 								transformers: createVitepressTransformer(),
