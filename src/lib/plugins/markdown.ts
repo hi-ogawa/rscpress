@@ -4,7 +4,7 @@ import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-
 import rehypeShikiFromHighlighter, {
 	type RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
-import type { Root } from "mdast";
+import type { Code, Root } from "mdast";
 import remarkDirective from "remark-directive";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
@@ -101,9 +101,17 @@ function remarkCustom() {
 					node.data.hProperties = {
 						class: `vp-code-group`,
 					};
-					const metas = node.children.map(
-						(c) => c.type === "code" && c.meta && c.meta.slice(1, -1),
-					) as string[];
+					const codes: Code[] = [];
+					for (const c of node.children) {
+						if (c.type !== "code") {
+							file.info("Code group must contain only code blocks");
+							continue;
+						}
+						codes.push(c);
+					}
+					const titles = codes.map(
+						(c) => (c.type === "code" && c.meta && getCodeTitle(c.meta)) || "",
+					);
 					const id = node.position?.start.offset!;
 					node.children = [
 						{
@@ -114,7 +122,7 @@ function remarkCustom() {
 								hProperties: {
 									class: `tabs`,
 								},
-								hChildren: metas.flatMap((meta, i) => [
+								hChildren: titles.flatMap((title, i) => [
 									{
 										type: "element",
 										tagName: "input",
@@ -134,7 +142,7 @@ function remarkCustom() {
 										properties: {
 											for: `group-${id}:${i}`,
 										},
-										children: [{ type: "text", value: meta }],
+										children: [{ type: "text", value: title }],
 									},
 								]),
 							},
@@ -147,12 +155,12 @@ function remarkCustom() {
 									class: `blocks`,
 								},
 							},
-							children: node.children.map((c, i) => ({
+							children: codes.map((c, i) => ({
 								...c,
 								// pass metadata to code block
-								meta: c.meta.replace(
-									/\[.*\]/g,
-									(m) => `[code-group:${i}:${m.slice(1, -1)}]`,
+								meta: c.meta?.replace(
+									CODE_TITLE_RE,
+									(_, m) => `[code-group:${i}:${m}]`,
 								),
 							})) as any,
 						},
@@ -165,12 +173,12 @@ function remarkCustom() {
 						file.info("Invalid 'snippet' directive");
 					}
 					// TODO: use vite resolve and raw loader
-					const file = path.resolve(value);
-					const data = fs.readFileSync(file, "utf-8");
+					const filePath = path.resolve(value);
+					const data = fs.readFileSync(filePath, "utf-8");
 					node.children = [
 						{
 							type: "code",
-							lang: path.extname(file).slice(1) || "text",
+							lang: path.extname(filePath).slice(1) || "text",
 							// TODO: meta
 							// meta: `[${path.basename(file)}]`,
 							value: data,
@@ -213,7 +221,15 @@ function remarkCustom() {
 	};
 }
 
-const cls = (...args: any[]) => args.filter(Boolean).join(" ");
+const CODE_TITLE_RE = /\[([^\]]+)\]/;
+
+function getCodeTitle(s: string): string {
+	const match = s.match(CODE_TITLE_RE);
+	if (match) {
+		return match[1];
+	}
+	return "";
+}
 
 // https://github.com/vitejs/vite-plugin-vue/blob/06931b1ea2b9299267374cb8eb4db27c0626774a/packages/plugin-vue/src/utils/query.ts#L13
 function parseIdQuery(id: string): {
@@ -245,8 +261,8 @@ function createVitepressTransformer(): ShikiTransformer[] {
 			},
 			root(node) {
 				const lang = this.options.lang;
-				const raw = this.options.meta.__raw || "";
-				const title = raw.match(/\[(.*)\]/)?.[1] || "";
+				const raw = this.options.meta?.__raw || "";
+				const title = getCodeTitle(raw) || "";
 
 				// div.vp-code-block-title
 				//   div.vp-code-block-title-bar
@@ -317,7 +333,7 @@ function createVitepressTransformer(): ShikiTransformer[] {
 					};
 				}
 
-				node.children = [codeBlock];
+				node.children = [codeBlock] as any;
 			},
 		},
 	];
