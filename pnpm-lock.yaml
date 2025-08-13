@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@vitejs/plugin-rsc':
-        specifier: latest
-        version: 0.4.17(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -52,8 +49,11 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3
       '@vitejs/plugin-react':
-        specifier: latest
+        specifier: ^5.0.0
         version: 5.0.0(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))
+      '@vitejs/plugin-rsc':
+        specifier: ^0.4.20
+        version: 0.4.20(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))
       hastscript:
         specifier: ^9.0.1
         version: 9.0.1
@@ -614,8 +614,8 @@ packages:
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
 
-  '@vitejs/plugin-rsc@0.4.17':
-    resolution: {integrity: sha512-EjtEb3A3JLGyRwVBTYA1+OO0bbLL+9x3O5o6+8VbyRefqZ7hrrzAKqGUVK7rko28nkgB4eyC/70/gvIiQGexeQ==}
+  '@vitejs/plugin-rsc@0.4.20':
+    resolution: {integrity: sha512-K03PxmV3GzrEHBoJ0wW8v2MiqPTJqmmvihsphXOidwOBcrwaFkGqnPDGI1Fb794NhZmJt4E5pUGLfBwFgcT5Lw==}
     peerDependencies:
       react: '*'
       react-dom: '*'
@@ -1292,11 +1292,6 @@ packages:
     peerDependencies:
       browserslist: '>= 4.21.0'
 
-  use-sync-external-store@1.5.0:
-    resolution: {integrity: sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
   vfile-message@4.0.3:
     resolution: {integrity: sha512-QTHzsGd1EhbZs4AsQ20JX1rC3cOlt/IWJruk893DfLRr57lcnOeMaWG4K0JrRta4mIJZKth2Au3mM3u03/JWKw==}
 
@@ -1850,7 +1845,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-rsc@0.4.17(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))':
+  '@vitejs/plugin-rsc@0.4.20(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))':
     dependencies:
       '@remix-run/node-fetch-server': 0.8.0
       es-module-lexer: 1.7.0
@@ -1860,7 +1855,6 @@ snapshots:
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
       turbo-stream: 3.1.0
-      use-sync-external-store: 1.5.0(react@19.1.1)
       vite: 7.1.1(@types/node@24.2.1)(yaml@2.8.1)
       vitefu: 1.1.1(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))
 
@@ -2974,10 +2968,6 @@ snapshots:
       browserslist: 4.25.1
       escalade: 3.2.0
       picocolors: 1.1.1
-
-  use-sync-external-store@1.5.0(react@19.1.1):
-    dependencies:
-      react: 19.1.1
 
   vfile-message@4.0.3:
     dependencies:

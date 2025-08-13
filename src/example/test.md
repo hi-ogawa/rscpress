@@ -1,5 +1,7 @@
 # Test
 
+## Code group
+
 ::: code-group
 
 ```sh [npm]
@@ -15,3 +17,7 @@ $ yarn add -D vitepress
 ```
 
 :::
+
+## Snippet
+
+::snippet[./snippets/test.ts]

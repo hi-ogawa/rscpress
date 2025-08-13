@@ -14,8 +14,16 @@ import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import { visit } from "unist-util-visit";
 import { VFile } from "vfile";
-import type { Plugin } from "vite";
+import type { Plugin, Rollup } from "vite";
 import { remarkContainerSyntax } from "./mdx/remarkPlugins/containerSyntax";
+
+declare module "vfile" {
+	interface DataMap {
+		rscpress: {
+			ctx: Rollup.TransformPluginContext;
+		};
+	}
+}
 
 export function markdownPlugin(): Plugin[] {
 	// https://github.com/mdx-js/mdx/blob/2b3381a8962dc888c0f2ed181cf80c6a1140b662/packages/rollup/lib/index.js
@@ -35,6 +43,7 @@ export function markdownPlugin(): Plugin[] {
 						// TODO: warning if used language is not loaded
 						import("@shikijs/langs/json"),
 						import("@shikijs/langs/javascript"),
+						import("@shikijs/langs/typescript"),
 						import("@shikijs/langs/shell"),
 					],
 					engine: createOnigurumaEngine(() => import("shiki/wasm")),
@@ -84,7 +93,11 @@ export function markdownPlugin(): Plugin[] {
 				code = code.replace(/^::: code-group\b/gm, ":::code-group ");
 
 				const file = new VFile({ path: filename, value: code });
+				file.data.rscpress = { ctx: this };
 				const compiled = await processors.process(file);
+				for (const message of compiled.messages) {
+					this.warn(message.message);
+				}
 				const output = String(compiled.value);
 				return output;
 			},
@@ -93,7 +106,14 @@ export function markdownPlugin(): Plugin[] {
 }
 
 function remarkCustom() {
-	return function (tree: Root, file: VFile) {
+	return async function (tree: Root, file: VFile) {
+		const { ctx } = file.data.rscpress!;
+		const asyncTaskResults: Promise<void>[] = [];
+
+		function pushTask(task: () => Promise<void>) {
+			asyncTaskResults.push(task());
+		}
+
 		visit(tree, function (node) {
 			// https://github.com/remarkjs/remark-directive/
 			if (
@@ -178,23 +198,34 @@ function remarkCustom() {
 					if (!value) {
 						file.info("Invalid 'snippet' directive");
 					}
-					// TODO: use vite resolve and raw loader
-					const filePath = path.resolve(value);
-					const data = fs.readFileSync(filePath, "utf-8");
-					node.children = [
-						{
-							type: "code",
-							lang: path.extname(filePath).slice(1) || "text",
-							// TODO: meta
-							// meta: `[${path.basename(file)}]`,
-							value: data,
-						},
-					];
+					const code: Code = {
+						type: "code",
+						lang: "text",
+						value: `(snippet:${value})`,
+					};
+					pushTask(async () => {
+						const resolved = await ctx.resolve(value, file.path);
+						if (!resolved) {
+							file.info("Failed to resolve snippet file: " + value);
+							return;
+						}
+						const id = resolved.id;
+						const content = fs.readFileSync(id, "utf-8");
+						code.lang = path.extname(id).slice(1);
+						code.value = content;
+						const title = node.attributes?.title ?? path.basename(id);
+						code.meta = `[${title}]`;
+					});
+					node.children = [code];
 					return;
 				}
-				file.info("Unknown directive: " + node.name);
+
+				// TODO
+				// file.info("Unknown directive: " + node.name);
 			}
 		});
+
+		await Promise.all(asyncTaskResults);
 	};
 }
 
