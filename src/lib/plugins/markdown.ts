@@ -51,7 +51,6 @@ export function markdownPlugin(): Plugin[] {
 					format: "mdx",
 					remarkPlugins: [
 						remarkGfm,
-						// remarkContainerSyntax,
 						remarkDirective,
 						remarkFrontmatter,
 						remarkMdxFrontmatter,
