@@ -1,11 +1,11 @@
 # rscpress
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/hi-ogawa/rscpress?file=src%2Fexample%2Fguide%2Fgetting-started.md)
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/hi-ogawa/rscpress?file=docs%2Fguide%2Fgetting-started.md)
 
 ```js
 pnpm dev
 pnpm build
-pnpm start
+pnpm preview
 ```
 
 ## Credits
