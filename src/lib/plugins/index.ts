@@ -113,13 +113,8 @@ async function renderStatic(config: ResolvedConfig) {
 		const { html, rsc } = await entry.handleSsg(
 			new Request(new URL(pagePath, "http://ssg.local")),
 		);
-		await writeFile(html, path.join(baseDir, normalizeHtmlFilePath(pagePath)));
-		await writeFile(rsc, path.join(baseDir, pagePath + RSC_POSTFIX));
-	}
-
-	async function writeFile(stream: ReadableStream, filePath: string) {
-		await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
-		await fs.promises.writeFile(filePath, Readable.fromWeb(stream as any));
+		await writeFileX(html, path.join(baseDir, normalizeHtmlFilePath(pagePath)));
+		await writeFileX(rsc, path.join(baseDir, pagePath + RSC_POSTFIX));
 	}
 
 	// render pages
@@ -137,13 +132,27 @@ async function renderStatic(config: ResolvedConfig) {
 
 	for (const staticPath of staticPaths) {
 		const htmlFilePath = path.join(baseDir, normalizeHtmlFilePath(staticPath));
-		const htmlContent = await fs.promises.readFile(htmlFilePath, "utf-8");
-		const updatedHtmlContent = htmlContent.replace(
-			`"__rscpress_ssg_placeholder__"`,
-			`window.__rscpress_ssg = ${JSON.stringify(ssgData)}`,
-		);
-		await fs.promises.writeFile(htmlFilePath, updatedHtmlContent);
+		await updateFile(htmlFilePath, (content) => {
+			return content.replace(
+				`"__rscpress_ssg_placeholder__"`,
+				`window.__rscpress_ssg = ${JSON.stringify(ssgData)}`,
+			);
+		});
 	}
+}
+
+async function writeFileX(stream: ReadableStream, filePath: string) {
+	await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+	await fs.promises.writeFile(filePath, Readable.fromWeb(stream as any));
+}
+
+async function updateFile(
+	filePath: string,
+	updateFn: (content: string) => string,
+) {
+	const content = await fs.promises.readFile(filePath, "utf-8");
+	const updatedContent = updateFn(content);
+	await fs.promises.writeFile(filePath, updatedContent);
 }
 
 function normalizeHtmlFilePath(p: string) {
