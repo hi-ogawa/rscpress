@@ -15,7 +15,6 @@ import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import { visit } from "unist-util-visit";
 import { VFile } from "vfile";
 import type { Plugin, Rollup } from "vite";
-import { remarkContainerSyntax } from "./mdx/remarkPlugins/containerSyntax";
 
 declare module "vfile" {
 	interface DataMap {
