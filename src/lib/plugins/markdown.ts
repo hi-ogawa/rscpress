@@ -4,7 +4,7 @@ import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-
 import rehypeShikiFromHighlighter, {
 	type RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
-import type { Code, Node, Parent, Root } from "mdast";
+import type { Code, Parent, Root } from "mdast";
 import remarkDirective from "remark-directive";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
