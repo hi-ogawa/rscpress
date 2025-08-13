@@ -16,4 +16,4 @@ $ yarn add -D vitepress
 
 :::
 
-::snippet[src/example/snippets/test.ts]
+::snippet[./snippets/init.ansi]
