@@ -41,7 +41,7 @@ export default async function handler(request: Request): Promise<Response> {
 }
 
 // separate API to render both streams at once for ssg
-export async function prerender(request: Request): Promise<{
+export async function handleSsg(request: Request): Promise<{
 	html: ReadableStream<Uint8Array>;
 	rsc: ReadableStream<Uint8Array>;
 }> {
