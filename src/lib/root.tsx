@@ -6,8 +6,7 @@ import { NotFound } from "./components/not-found";
 import { Layout } from "./layout";
 
 export async function getStaticPaths(): Promise<string[]> {
-	const paths = Object.keys(routeModules);
-	return [...paths, "404"];
+	return Object.keys(routeModules);
 }
 
 export async function Root({ url }: { url: URL }) {

@@ -1,4 +1,3 @@
-import assert from "node:assert";
 import fs from "node:fs";
 import path from "node:path";
 import { Readable } from "node:stream";
@@ -7,6 +6,7 @@ import react from "@vitejs/plugin-react";
 import rsc, { type RscPluginOptions } from "@vitejs/plugin-rsc";
 import { type Connect, type Plugin, type ResolvedConfig } from "vite";
 import { RSC_POSTFIX } from "../framework/shared";
+import type { SsgData } from "../types";
 import { markdownPlugin } from "./markdown";
 
 export default function rscpress(): Plugin[] {
@@ -105,36 +105,54 @@ async function renderStatic(config: ResolvedConfig) {
 
 	// entry provides a list of static paths
 	const staticPaths = await entry.getStaticPaths();
+	staticPaths.push("/404");
 
-	// render rsc and html
 	const baseDir = config.environments.client.build.outDir;
 
-	// TODO: paralell
-	for (const htmlPath of staticPaths) {
-		config.logger.info("[rscpress:ssg] -> " + htmlPath);
-		const rscPath = htmlPath + RSC_POSTFIX;
-		const htmlResponse = await entry.default(
-			new Request(new URL(htmlPath, "http://ssg.local")),
+	async function renderPage(pagePath: string) {
+		const { html, rsc } = await entry.handleSsg(
+			new Request(new URL(pagePath, "http://ssg.local")),
 		);
-		assert.equal(htmlResponse.status, 200);
-		const htmlFile = path.join(baseDir, normalizeHtmlFilePath(htmlPath));
-		await fs.promises.mkdir(path.dirname(htmlFile), { recursive: true });
-		await fs.promises.writeFile(
-			htmlFile,
-			Readable.fromWeb(htmlResponse.body as any),
-		);
-
-		const rscResponse = await entry.default(
-			new Request(new URL(rscPath, "http://ssg.local")),
-		);
-		assert.equal(rscResponse.status, 200);
-		const rscFile = path.join(baseDir, rscPath);
-		await fs.promises.mkdir(path.dirname(rscFile), { recursive: true });
-		await fs.promises.writeFile(
-			path.join(baseDir, rscPath),
-			Readable.fromWeb(rscResponse.body as any),
-		);
+		await writeFileX(path.join(baseDir, normalizeHtmlFilePath(pagePath)), html);
+		await writeFileX(path.join(baseDir, pagePath + RSC_POSTFIX), rsc);
 	}
+
+	// render pages
+	for (const staticPath of staticPaths) {
+		config.logger.info("[rscpress:ssg] -> " + staticPath);
+		await renderPage(staticPath);
+	}
+
+	// inject extra ssg data into html
+	const ssgData: SsgData = {
+		notFound: fs
+			.readFileSync(path.join(baseDir, "404" + RSC_POSTFIX))
+			.toString("base64"),
+	};
+
+	for (const staticPath of staticPaths) {
+		const htmlFilePath = path.join(baseDir, normalizeHtmlFilePath(staticPath));
+		await updateFile(htmlFilePath, (content) => {
+			return content.replace(
+				`"__rscpress_ssg_placeholder__"`,
+				`window.__rscpress_ssg = ${JSON.stringify(ssgData)}`,
+			);
+		});
+	}
+}
+
+async function writeFileX(filePath: string, stream: ReadableStream) {
+	await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+	await fs.promises.writeFile(filePath, Readable.fromWeb(stream as any));
+}
+
+async function updateFile(
+	filePath: string,
+	updateFn: (content: string) => string,
+) {
+	const content = await fs.promises.readFile(filePath, "utf-8");
+	const updatedContent = updateFn(content);
+	await fs.promises.writeFile(filePath, updatedContent);
 }
 
 function normalizeHtmlFilePath(p: string) {

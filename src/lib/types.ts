@@ -11,3 +11,11 @@ export type RouteModule = {
 	default: React.FC;
 	frontmatter?: RouteFrontmatter;
 };
+
+export type SsgData = {
+	notFound: string;
+};
+
+declare global {
+	var __rscpress_ssg: SsgData | undefined;
+}
