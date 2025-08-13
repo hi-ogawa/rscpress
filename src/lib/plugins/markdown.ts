@@ -43,6 +43,7 @@ export function markdownPlugin(): Plugin[] {
 						// TODO: warning if used language is not loaded
 						import("@shikijs/langs/json"),
 						import("@shikijs/langs/javascript"),
+						import("@shikijs/langs/typescript"),
 						import("@shikijs/langs/shell"),
 					],
 					engine: createOnigurumaEngine(() => import("shiki/wasm")),
@@ -212,13 +213,15 @@ function remarkCustom() {
 						const content = fs.readFileSync(id, "utf-8");
 						code.lang = path.extname(id).slice(1);
 						code.value = content;
-						// TODO: code title
-						// code.meta = `[${path.basename(id)}]`;
+						const title = node.attributes?.title ?? path.basename(id);
+						code.meta = `[${title}]`;
 					});
 					node.children = [code];
 					return;
 				}
-				file.info("Unknown directive: " + node.name);
+
+				// TODO
+				// file.info("Unknown directive: " + node.name);
 			}
 		});
 
