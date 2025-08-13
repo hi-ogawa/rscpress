@@ -253,8 +253,7 @@ function remarkCustom() {
 					return;
 				}
 
-				// TODO
-				// file.info("Unknown directive: " + node.name);
+				file.info("Unknown directive: " + node.name);
 			}
 
 			// TODO
