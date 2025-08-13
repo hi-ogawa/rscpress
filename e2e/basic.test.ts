@@ -2,14 +2,17 @@ import { expect, type Page, test } from "@playwright/test";
 import * as vite from "vite";
 import { waitForHydration } from "./helper";
 
+const inlineConfig: vite.InlineConfig = {
+	configLoader: "native",
+	configFile: "docs/vite.config.ts",
+	root: "docs",
+};
+
 test.describe("dev", () => {
 	let server: vite.ViteDevServer;
 	let url: string;
 	test.beforeAll(async () => {
-		server = await vite.createServer({
-			configFile: "docs/vite.config.ts",
-			root: "docs",
-		});
+		server = await vite.createServer(inlineConfig);
 		await server.listen();
 		url = server.resolvedUrls?.local[0]!;
 	});
@@ -23,16 +26,13 @@ test.describe("dev", () => {
 	});
 });
 
-test.describe.skip("build", () => {
+test.describe("build", () => {
 	let server: vite.PreviewServer;
 	let url: string;
 	test.beforeAll(async () => {
-		const builder = await vite.createBuilder({
-			configFile: "docs/vite.config.ts",
-			root: "docs",
-		});
+		const builder = await vite.createBuilder(inlineConfig);
 		await builder.buildApp();
-		server = await vite.preview();
+		server = await vite.preview(inlineConfig);
 		url = server.resolvedUrls?.local[0]!;
 	});
 	test.afterAll(async () => {

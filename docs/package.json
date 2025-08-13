@@ -5,12 +5,12 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite --config-loader=native",
-		"build": "vite build",
-		"preview": "vite preview"
+		"build": "vite --config-loader=native build",
+		"preview": "vite --config-loader=native preview"
 	},
-	"dependencies": {},
 	"devDependencies": {
 		"@hiogawa/rscpress": "workspace:*",
+		"vite": "^7.1.1",
 		"vite-plugin-inspect": "^11.3.2"
 	}
 }

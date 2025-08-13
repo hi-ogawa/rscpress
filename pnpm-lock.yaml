@@ -93,6 +93,9 @@ importers:
       '@hiogawa/rscpress':
         specifier: workspace:*
         version: link:..
+      vite:
+        specifier: ^7.1.1
+        version: 7.1.1(@types/node@24.2.1)(yaml@2.8.1)
       vite-plugin-inspect:
         specifier: ^11.3.2
         version: 11.3.2(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))
