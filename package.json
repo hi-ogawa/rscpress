@@ -19,21 +19,10 @@
 		"lint-check": "biome check ."
 	},
 	"dependencies": {
-		"react": "^19.1.1",
-		"react-dom": "^19.1.1"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.1.4",
 		"@mdx-js/mdx": "^3.1.0",
-		"@playwright/test": "^1.54.2",
 		"@shikijs/langs": "^3.9.2",
 		"@shikijs/rehype": "^3.9.2",
 		"@shikijs/themes": "^3.9.2",
-		"@types/mdast": "^4.0.4",
-		"@types/node": "^24.2.1",
-		"@types/react": "^19.1.9",
-		"@types/react-dom": "^19.1.7",
-		"@types/unist": "^3.0.3",
 		"@vitejs/plugin-react": "^5.0.0",
 		"@vitejs/plugin-rsc": "^0.4.20",
 		"remark-directive": "^4.0.0",
@@ -42,12 +31,27 @@
 		"remark-mdx-frontmatter": "^5.2.0",
 		"rsc-html-stream": "^0.0.7",
 		"shiki": "^3.9.2",
-		"typescript": "^5.9.2",
 		"unified": "^11.0.5",
 		"unist-util-visit": "^5.0.0",
-		"vfile": "^6.0.3",
-		"vite": "^7.0.6",
-		"vite-plugin-inspect": "^11.3.2"
+		"vfile": "^6.0.3"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.1.4",
+		"@playwright/test": "^1.54.2",
+		"@types/mdast": "^4.0.4",
+		"@types/node": "^24.2.1",
+		"@types/react": "^19.1.9",
+		"@types/react-dom": "^19.1.7",
+		"@types/unist": "^3.0.3",
+		"react": "^19.1.1",
+		"react-dom": "^19.1.1",
+		"typescript": "^5.9.2",
+		"vite": "^7.0.6"
+	},
+	"peerDependencies": {
+		"react": "*",
+		"react-dom": "*",
+		"vite": "*"
 	},
 	"packageManager": "pnpm@10.14.0+sha512.ad27a79641b49c3e481a16a805baa71817a04bbe06a38d17e60e2eaee83f6a146c6a688125f5792e48dd5ba30e7da52a5cda4c3992b9ccf333f9ce223af84748"
 }

@@ -8,13 +8,9 @@
 		"build": "vite build",
 		"preview": "vite preview"
 	},
-	"dependencies": {
-		"react": "^19.1.1",
-		"react-dom": "^19.1.1"
-	},
+	"dependencies": {},
 	"devDependencies": {
 		"@hiogawa/rscpress": "workspace:*",
-		"vite": "^7.0.6",
 		"vite-plugin-inspect": "^11.3.2"
 	}
 }
