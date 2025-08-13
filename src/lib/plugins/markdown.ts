@@ -107,7 +107,8 @@ export function markdownPlugin(): Plugin[] {
 const CUSTOM_BLOCKS = ["info", "tip", "warning", "danger", "details"];
 
 // https://vitepress.dev/guide/markdown#github-flavored-alerts
-const GITHUB_ALERTS = ["note", "tip", "important", "warning", "caution"];
+const GITHUB_ALERTS = ["NOTE", "TIP", "IMPORTANT", "WARNING", "CAUTION"];
+const GITHUB_ALERTS_RE = new RegExp(`^\\[!(${GITHUB_ALERTS.join("|")})\\]\n`);
 
 function remarkCustom() {
 	return async function (tree: Root, file: VFile) {
@@ -256,9 +257,38 @@ function remarkCustom() {
 				file.info("Unknown directive: " + node.name);
 			}
 
-			// TODO
 			// https://vitepress.dev/guide/markdown#github-flavored-alerts
-			GITHUB_ALERTS;
+			if (node.type === "blockquote") {
+				const p = node.children[0];
+				if (p?.type === "paragraph" && p.children[0]?.type === "text") {
+					const text = p.children[0].value;
+					const match = text.match(GITHUB_ALERTS_RE);
+					if (match) {
+						const newValue = text.slice(match[0].length);
+						p.children[0] = {
+							type: "text",
+							value: newValue,
+						};
+						const title = match[1];
+						node.data ??= {};
+						node.data.hName = "div";
+						node.data.hProperties = {
+							class: `custom-block github-alert ${title.toLocaleLowerCase()}`,
+						};
+						node.children.unshift({
+							type: "html",
+							value: "",
+							data: {
+								hName: "p",
+								hProperties: {
+									class: "custom-block-title",
+								},
+								hChildren: [{ type: "text", value: title }],
+							},
+						});
+					}
+				}
+			}
 		});
 
 		await Promise.all(asyncTaskResults);

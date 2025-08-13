@@ -35,3 +35,8 @@ This is a tip with a custom title.
 :::danger
 This is a danger.
 :::
+
+## GitHub-flavored Alerts
+
+> [!IMPORTANT]
+> This is a note.
