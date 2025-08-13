@@ -45,7 +45,7 @@ export async function renderHTML(
 		nonce: options?.nonce,
 	});
 
-	if (options?.ssg) {
+	if (options.ssg) {
 		await htmlStream.allReady;
 	}
 
