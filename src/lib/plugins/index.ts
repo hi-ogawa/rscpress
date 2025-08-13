@@ -113,8 +113,8 @@ async function renderStatic(config: ResolvedConfig) {
 		const { html, rsc } = await entry.handleSsg(
 			new Request(new URL(pagePath, "http://ssg.local")),
 		);
-		await writeFileX(html, path.join(baseDir, normalizeHtmlFilePath(pagePath)));
-		await writeFileX(rsc, path.join(baseDir, pagePath + RSC_POSTFIX));
+		await writeFileX(path.join(baseDir, normalizeHtmlFilePath(pagePath)), html);
+		await writeFileX(path.join(baseDir, pagePath + RSC_POSTFIX), rsc);
 	}
 
 	// render pages
@@ -141,7 +141,7 @@ async function renderStatic(config: ResolvedConfig) {
 	}
 }
 
-async function writeFileX(stream: ReadableStream, filePath: string) {
+async function writeFileX(filePath: string, stream: ReadableStream) {
 	await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
 	await fs.promises.writeFile(filePath, Readable.fromWeb(stream as any));
 }
