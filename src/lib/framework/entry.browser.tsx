@@ -3,10 +3,10 @@ import React from "react";
 import * as ReactDOMClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { RSC_POSTFIX, type RscPayload } from "./shared";
-import { fromBase64 } from "./utils";
+import { fromBase64, toSingleReadableStream } from "./utils";
 
 // TODO: scroll restoration
-// TODO: vite transition
+// TODO: view transition
 
 async function main() {
 	async function onNavigation() {
@@ -20,13 +20,9 @@ async function main() {
 		let stream = response.ok && response.body;
 		if (response.status === 404 && globalThis.__rscpress_ssg) {
 			// use ssg-ed 404 payload on production
-			const ssgData = globalThis.__rscpress_ssg;
-			stream = new ReadableStream({
-				start(controller) {
-					controller.enqueue(fromBase64(ssgData.notFound));
-					controller.close();
-				},
-			});
+			stream = toSingleReadableStream(
+				fromBase64(globalThis.__rscpress_ssg.notFound),
+			);
 		} else if (!response.ok || !stream) {
 			// TODO: handle network error etc...
 			return;

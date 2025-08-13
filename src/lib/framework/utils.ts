@@ -10,3 +10,12 @@ function stringToUint8Array(binary: string): Uint8Array {
 export function fromBase64(data: string): Uint8Array {
 	return stringToUint8Array(atob(data));
 }
+
+export function toSingleReadableStream<T>(data: T): ReadableStream<T> {
+	return new ReadableStream({
+		start(controller) {
+			controller.enqueue(data);
+			controller.close();
+		},
+	});
+}
