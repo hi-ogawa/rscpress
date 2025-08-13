@@ -110,7 +110,7 @@ async function renderStatic(config: ResolvedConfig) {
 	const baseDir = config.environments.client.build.outDir;
 
 	async function renderPage(pagePath: string) {
-		const { html, rsc } = await entry.prerender(
+		const { html, rsc } = await entry.handleSsg(
 			new Request(new URL(pagePath, "http://ssg.local")),
 		);
 		await writeFile(html, path.join(baseDir, normalizeHtmlFilePath(pagePath)));

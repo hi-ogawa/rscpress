@@ -25,9 +25,7 @@ export default async function handler(request: Request): Promise<Response> {
 		});
 	}
 
-	const ssr = await import.meta.viteRsc.loadModule<
-		typeof import("./entry.ssr")
-	>("ssr", "index");
+	const ssr = await loadSsrModule();
 	const htmlStream = await ssr.renderHTML(rscStream, {
 		debugNojs: url.searchParams.has("__nojs"),
 	});
@@ -50,14 +48,19 @@ export async function handleSsg(request: Request): Promise<{
 	const rscStream = ReactServer.renderToReadableStream<RscPayload>(rscPayload);
 	const [rscStream1, rscStream2] = rscStream.tee();
 
-	const ssr = await import.meta.viteRsc.loadModule<
-		typeof import("./entry.ssr")
-	>("ssr", "index");
+	const ssr = await loadSsrModule();
 	const htmlStream = await ssr.renderHTML(rscStream1, {
 		ssg: true,
 	});
 
 	return { html: htmlStream, rsc: rscStream2 };
+}
+
+function loadSsrModule() {
+	return import.meta.viteRsc.loadModule<typeof import("./entry.ssr")>(
+		"ssr",
+		"index",
+	);
 }
 
 if (import.meta.hot) {
