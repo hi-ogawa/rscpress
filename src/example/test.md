@@ -2,7 +2,7 @@
 
 ## Code group
 
-::: code-group
+:::code-group
 
 ```sh [npm]
 $ npm add -D vitepress
