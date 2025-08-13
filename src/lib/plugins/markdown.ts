@@ -179,6 +179,7 @@ function remarkCustom() {
 						file.info("Invalid 'snippet' directive");
 					}
 					// TODO: use vite resolve and raw loader
+					// TODO: detect language from extension
 					const filePath = path.resolve(value);
 					const data = fs.readFileSync(filePath, "utf-8");
 					node.children = [
