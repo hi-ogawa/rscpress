@@ -54,7 +54,7 @@ export function markdownPlugin(): Plugin[] {
 						remarkDirective,
 						remarkFrontmatter,
 						remarkMdxFrontmatter,
-						remarkCustom,
+						remarkRscpress,
 					],
 					rehypePlugins: [
 						// https://shiki.style/packages/rehype
@@ -69,7 +69,7 @@ export function markdownPlugin(): Plugin[] {
 								defaultColor: false,
 								addLanguageClass: true,
 								defaultLanguage: "text",
-								transformers: createVitepressTransformer(),
+								transformers: createRscpressTransformer(),
 							} satisfies RehypeShikiCoreOptions,
 						],
 					],
@@ -109,7 +109,7 @@ const CUSTOM_BLOCKS = ["info", "tip", "warning", "danger", "details"];
 const GITHUB_ALERTS = ["NOTE", "TIP", "IMPORTANT", "WARNING", "CAUTION"];
 const GITHUB_ALERTS_RE = new RegExp(`^\\[!(${GITHUB_ALERTS.join("|")})\\]\n`);
 
-function remarkCustom() {
+function remarkRscpress() {
 	return async function (tree: Root, file: VFile) {
 		const { ctx } = file.data.rscpress!;
 		const asyncTaskResults: Promise<void>[] = [];
@@ -316,7 +316,7 @@ function parseIdQuery(id: string): {
 }
 
 // https://shiki.style/guide/transformers
-function createVitepressTransformer(): ShikiTransformer[] {
+function createRscpressTransformer(): ShikiTransformer[] {
 	return [
 		{
 			name: "vitepress:wrapper",
