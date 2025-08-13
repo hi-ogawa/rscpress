@@ -4,10 +4,14 @@
 	"private": true,
 	"license": "MIT",
 	"type": "module",
+	"exports": {
+		"./plugin": "./src/lib/plugins/index.ts",
+		"./package.json": "./package.json"
+	},
 	"scripts": {
-		"dev": "vite",
-		"build": "vite build",
-		"preview": "vite preview",
+		"dev": "pnpm -C docs dev",
+		"build": "pnpm -C docs build",
+		"preview": "pnpm -C docs preview",
 		"test-e2e": "playwright test",
 		"tsc": "tsc -b",
 		"tsc-dev": "tsc -b --watch --preserveWatchOutput",

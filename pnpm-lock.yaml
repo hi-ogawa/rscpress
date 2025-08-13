@@ -91,6 +91,25 @@ importers:
         specifier: ^11.3.2
         version: 11.3.2(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))
 
+  docs:
+    dependencies:
+      react:
+        specifier: ^19.1.1
+        version: 19.1.1
+      react-dom:
+        specifier: ^19.1.1
+        version: 19.1.1(react@19.1.1)
+    devDependencies:
+      '@hiogawa/rscpress':
+        specifier: workspace:*
+        version: link:..
+      vite:
+        specifier: ^7.0.6
+        version: 7.1.1(@types/node@24.2.1)(yaml@2.8.1)
+      vite-plugin-inspect:
+        specifier: ^11.3.2
+        version: 11.3.2(vite@7.1.1(@types/node@24.2.1)(yaml@2.8.1))
+
 packages:
 
   '@ampproject/remapping@2.3.0':
