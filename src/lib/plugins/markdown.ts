@@ -228,8 +228,7 @@ function remarkCustom() {
 				if (CUSTOM_BLOCKS.includes(node.name)) {
 					// add custom-block class
 					node.data ??= {};
-					const tagName = "div";
-					node.data.hName = tagName;
+					node.data.hName = "div";
 					node.data.hProperties = {
 						class: `custom-block ${node.name}`,
 					};
