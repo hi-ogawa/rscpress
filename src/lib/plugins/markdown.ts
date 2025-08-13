@@ -239,22 +239,17 @@ function remarkCustom() {
 						label = (directiveLabel as any).children[0].value;
 						node.children.shift();
 					}
-					const labelNode = {
-						type: "paragraph",
-						children: [
-							{
-								type: "text",
-								value: label,
-							},
-						],
+					node.children.unshift({
+						type: "html",
+						value: "",
 						data: {
 							hName: "p",
 							hProperties: {
 								class: "custom-block-title",
 							},
+							hChildren: [{ type: "text", value: label }],
 						},
-					};
-					node.children.unshift(labelNode as any);
+					});
 					return;
 				}
 
