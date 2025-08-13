@@ -1,4 +1,4 @@
-function stringToUint8Array(binary: string): Uint8Array {
+function stringToUint8Array(binary: string): Uint8Array<ArrayBuffer> {
 	const len = binary.length;
 	const arr = new Uint8Array(len);
 	for (let i = 0; i < len; i++) {
@@ -7,7 +7,7 @@ function stringToUint8Array(binary: string): Uint8Array {
 	return arr;
 }
 
-export function fromBase64(data: string): Uint8Array {
+export function fromBase64(data: string): Uint8Array<ArrayBuffer> {
 	return stringToUint8Array(atob(data));
 }
 
