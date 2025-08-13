@@ -40,6 +40,26 @@ export default async function handler(request: Request): Promise<Response> {
 	});
 }
 
+// separate API to render both streams at once for ssg
+export async function prerender(request: Request): Promise<{
+	html: ReadableStream<Uint8Array>;
+	rsc: ReadableStream<Uint8Array>;
+}> {
+	const url = new URL(request.url);
+	const rscPayload: RscPayload = { root: <Root url={url} /> };
+	const rscStream = ReactServer.renderToReadableStream<RscPayload>(rscPayload);
+	const [rscStream1, rscStream2] = rscStream.tee();
+
+	const ssr = await import.meta.viteRsc.loadModule<
+		typeof import("./entry.ssr")
+	>("ssr", "index");
+	const htmlStream = await ssr.renderHTML(rscStream1, {
+		ssg: true,
+	});
+
+	return { html: htmlStream, rsc: rscStream2 };
+}
+
 if (import.meta.hot) {
 	import.meta.hot.accept();
 }

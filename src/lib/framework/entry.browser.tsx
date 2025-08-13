@@ -3,6 +3,7 @@ import React from "react";
 import * as ReactDOMClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { RSC_POSTFIX, type RscPayload } from "./shared";
+import { fromBase64 } from "./utils";
 
 // TODO: scroll restoration
 // TODO: vite transition
@@ -11,25 +12,27 @@ async function main() {
 	async function onNavigation() {
 		const url = new URL(window.location.href);
 		url.pathname = url.pathname + RSC_POSTFIX;
-		let response = await fetch(url, {
+		const response = await fetch(url, {
 			headers: {
 				accept: "text/x-component",
 			},
 		});
-		if (response.status === 404) {
-			// use ssg-ed 404 payload
-			// TODO: embed it during build?
-			if (import.meta.env.__vite_rsc_build__) {
-				response = await fetch("/404_.rsc");
-			}
-		}
-		if (!response.ok || !response.body) {
-			// TODO: handle network error
+		let stream = response.ok && response.body;
+		if (response.status === 404 && globalThis.__rscpress_ssg) {
+			// use ssg-ed 404 payload on production
+			const ssgData = globalThis.__rscpress_ssg;
+			stream = new ReadableStream({
+				start(controller) {
+					controller.enqueue(fromBase64(ssgData.notFound));
+					controller.close();
+				},
+			});
+		} else if (!response.ok || !stream) {
+			// TODO: handle network error etc...
 			return;
 		}
-		const payload = await ReactClient.createFromReadableStream<RscPayload>(
-			response.body,
-		);
+		const payload =
+			await ReactClient.createFromReadableStream<RscPayload>(stream);
 		setPayload(payload);
 	}
 

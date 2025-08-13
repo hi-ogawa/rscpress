@@ -9,6 +9,7 @@ export async function renderHTML(
 	options: {
 		nonce?: string;
 		debugNojs?: boolean;
+		ssg?: boolean;
 	},
 ) {
 	// duplicate one RSC stream into two.
@@ -40,9 +41,13 @@ export async function renderHTML(
 	const htmlStream = await ReactDOMServer.renderToReadableStream(<SsrRoot />, {
 		bootstrapScriptContent: options?.debugNojs
 			? undefined
-			: bootstrapScriptContent,
+			: `"__rscpress_ssg_placeholder__";` + bootstrapScriptContent,
 		nonce: options?.nonce,
 	});
+
+	if (options?.ssg) {
+		await htmlStream.allReady;
+	}
 
 	let responseStream: ReadableStream<Uint8Array> = htmlStream;
 	if (!options?.debugNojs) {
