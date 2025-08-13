@@ -4,7 +4,7 @@ import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-
 import rehypeShikiFromHighlighter, {
 	type RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
-import type { Code, Root } from "mdast";
+import type { Code, Parent, Root } from "mdast";
 import remarkDirective from "remark-directive";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
@@ -15,7 +15,6 @@ import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import { visit } from "unist-util-visit";
 import { VFile } from "vfile";
 import type { Plugin, Rollup } from "vite";
-import { remarkContainerSyntax } from "./mdx/remarkPlugins/containerSyntax";
 
 declare module "vfile" {
 	interface DataMap {
@@ -52,11 +51,10 @@ export function markdownPlugin(): Plugin[] {
 					format: "mdx",
 					remarkPlugins: [
 						remarkGfm,
-						remarkContainerSyntax,
 						remarkDirective,
 						remarkFrontmatter,
 						remarkMdxFrontmatter,
-						remarkCustom,
+						remarkRscpress,
 					],
 					rehypePlugins: [
 						// https://shiki.style/packages/rehype
@@ -71,7 +69,7 @@ export function markdownPlugin(): Plugin[] {
 								defaultColor: false,
 								addLanguageClass: true,
 								defaultLanguage: "text",
-								transformers: createVitepressTransformer(),
+								transformers: createRscpressTransformer(),
 							} satisfies RehypeShikiCoreOptions,
 						],
 					],
@@ -86,14 +84,13 @@ export function markdownPlugin(): Plugin[] {
 				const { filename, query } = parseIdQuery(id);
 				if (!("mdx" in query)) return;
 
-				// convert vitepress style directive to remark-directive
-				// "::: code-group" => ":::code-group"
-				// TODO: "">>>snippet" => "::snippet"
-				// TODO: "::: tip" => ":::tip"
-				code = code.replace(/^::: code-group\b/gm, ":::code-group ");
-
-				const file = new VFile({ path: filename, value: code });
-				file.data.rscpress = { ctx: this };
+				const file = new VFile({
+					path: filename,
+					value: code,
+					data: {
+						rscpress: { ctx: this },
+					},
+				});
 				const compiled = await processors.process(file);
 				for (const message of compiled.messages) {
 					this.warn(message.message);
@@ -105,7 +102,14 @@ export function markdownPlugin(): Plugin[] {
 	];
 }
 
-function remarkCustom() {
+// https://vitepress.dev/guide/markdown#custom-containers
+const CUSTOM_BLOCKS = ["info", "tip", "warning", "danger", "details"];
+
+// https://vitepress.dev/guide/markdown#github-flavored-alerts
+const GITHUB_ALERTS = ["NOTE", "TIP", "IMPORTANT", "WARNING", "CAUTION"];
+const GITHUB_ALERTS_RE = new RegExp(`^\\[!(${GITHUB_ALERTS.join("|")})\\]\n`);
+
+function remarkRscpress() {
 	return async function (tree: Root, file: VFile) {
 		const { ctx } = file.data.rscpress!;
 		const asyncTaskResults: Promise<void>[] = [];
@@ -220,13 +224,72 @@ function remarkCustom() {
 					return;
 				}
 
-				// TODO
-				// file.info("Unknown directive: " + node.name);
+				if (CUSTOM_BLOCKS.includes(node.name)) {
+					let title = node.name.toUpperCase();
+					const c = node.children[0];
+					if (c.data && "directiveLabel" in c.data) {
+						// custom title in directive label
+						title = (c as any).children[0].value;
+						node.children.shift();
+					}
+					createCustomContainer(node, {
+						title: title,
+						className: node.name,
+					});
+					return;
+				}
+
+				file.info("Unknown directive: " + node.name);
+			}
+
+			// https://vitepress.dev/guide/markdown#github-flavored-alerts
+			if (node.type === "blockquote") {
+				const p = node.children[0];
+				if (p?.type === "paragraph" && p.children[0]?.type === "text") {
+					const text = p.children[0].value;
+					const match = text.match(GITHUB_ALERTS_RE);
+					if (match) {
+						p.children[0] = {
+							type: "text",
+							value: text.slice(match[0].length),
+						};
+						const title = match[1];
+						createCustomContainer(node, {
+							title,
+							className: `github-alert ${title.toLocaleLowerCase()}`,
+						});
+					}
+				}
 			}
 		});
 
 		await Promise.all(asyncTaskResults);
 	};
+}
+
+function createCustomContainer(
+	node: Parent,
+	options: {
+		title: string;
+		className: string;
+	},
+) {
+	node.data ??= {};
+	node.data.hName = "div";
+	node.data.hProperties = {
+		class: `custom-block ${options.className}`,
+	};
+	node.children.unshift({
+		type: "html",
+		value: "",
+		data: {
+			hName: "p",
+			hProperties: {
+				class: "custom-block-title",
+			},
+			hChildren: [{ type: "text", value: options.title }],
+		},
+	});
 }
 
 const CODE_TITLE_RE = /\[([^\]]+)\]/;
@@ -253,7 +316,7 @@ function parseIdQuery(id: string): {
 }
 
 // https://shiki.style/guide/transformers
-function createVitepressTransformer(): ShikiTransformer[] {
+function createRscpressTransformer(): ShikiTransformer[] {
 	return [
 		{
 			name: "vitepress:wrapper",
