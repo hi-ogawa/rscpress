@@ -4,7 +4,7 @@ import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-
 import rehypeShikiFromHighlighter, {
 	type RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
-import type { Code, Root } from "mdast";
+import type { Code, Node, Parent, Root } from "mdast";
 import remarkDirective from "remark-directive";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
@@ -226,29 +226,16 @@ function remarkCustom() {
 				}
 
 				if (CUSTOM_BLOCKS.includes(node.name)) {
-					// add custom-block class
-					node.data ??= {};
-					node.data.hName = "div";
-					node.data.hProperties = {
-						class: `custom-block ${node.name}`,
-					};
-					// process label
-					const directiveLabel = node.children[0];
-					let label = node.name.toUpperCase();
-					if (directiveLabel.data && "directiveLabel" in directiveLabel.data) {
-						label = (directiveLabel as any).children[0].value;
+					let title = node.name.toUpperCase();
+					const c = node.children[0];
+					if (c.data && "directiveLabel" in c.data) {
+						// custom title in directive label
+						title = (c as any).children[0].value;
 						node.children.shift();
 					}
-					node.children.unshift({
-						type: "html",
-						value: "",
-						data: {
-							hName: "p",
-							hProperties: {
-								class: "custom-block-title",
-							},
-							hChildren: [{ type: "text", value: label }],
-						},
+					createCustomContainer(node, {
+						title: title,
+						className: node.name,
 					});
 					return;
 				}
@@ -263,27 +250,14 @@ function remarkCustom() {
 					const text = p.children[0].value;
 					const match = text.match(GITHUB_ALERTS_RE);
 					if (match) {
-						const newValue = text.slice(match[0].length);
 						p.children[0] = {
 							type: "text",
-							value: newValue,
+							value: text.slice(match[0].length),
 						};
 						const title = match[1];
-						node.data ??= {};
-						node.data.hName = "div";
-						node.data.hProperties = {
-							class: `custom-block github-alert ${title.toLocaleLowerCase()}`,
-						};
-						node.children.unshift({
-							type: "html",
-							value: "",
-							data: {
-								hName: "p",
-								hProperties: {
-									class: "custom-block-title",
-								},
-								hChildren: [{ type: "text", value: title }],
-							},
+						createCustomContainer(node, {
+							title,
+							className: `github-alert ${title.toLocaleLowerCase()}`,
 						});
 					}
 				}
@@ -292,6 +266,31 @@ function remarkCustom() {
 
 		await Promise.all(asyncTaskResults);
 	};
+}
+
+function createCustomContainer(
+	node: Parent,
+	options: {
+		title: string;
+		className: string;
+	},
+) {
+	node.data ??= {};
+	node.data.hName = "div";
+	node.data.hProperties = {
+		class: `custom-block ${options.className}`,
+	};
+	node.children.unshift({
+		type: "html",
+		value: "",
+		data: {
+			hName: "p",
+			hProperties: {
+				class: "custom-block-title",
+			},
+			hChildren: [{ type: "text", value: options.title }],
+		},
+	});
 }
 
 const CODE_TITLE_RE = /\[([^\]]+)\]/;
