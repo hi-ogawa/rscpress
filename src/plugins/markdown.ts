@@ -6,7 +6,7 @@ import rehypeShikiFromHighlighter, {
 } from "@shikijs/rehype/core";
 import * as acorn from "acorn";
 import type { Code, Parent, Root } from "mdast";
-import type { MdxJsxFlowElement } from "mdast-util-mdx-jsx";
+import type { MdxJsxAttribute, MdxJsxFlowElement } from "mdast-util-mdx-jsx";
 import remarkDirective from "remark-directive";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
@@ -148,26 +148,17 @@ function remarkRscpress() {
 							(_, m) => `[code-group:${i}:${m}]`,
 						),
 					}));
-					const newNode: MdxJsxFlowElement = {
-						type: "mdxJsxFlowElement",
-						name: "components.CodeGroup",
-						attributes: [
-							{
-								type: "mdxJsxAttribute",
-								name: "id",
-								value: String(id),
-							},
-							{
-								type: "mdxJsxAttribute",
-								name: "titles",
-								value: hEstree(
-									"mdxJsxAttributeValueExpression",
-									JSON.stringify(titles),
-								),
-							},
-						],
-						children: newCodes,
-					};
+					const newNode = hJsx(
+						"components.CodeGroup",
+						{
+							id: String(id),
+							titles: hEstree(
+								"mdxJsxAttributeValueExpression",
+								JSON.stringify(titles),
+							),
+						},
+						newCodes,
+					);
 					Object.assign(node, newNode);
 					return;
 				}
@@ -206,10 +197,17 @@ function remarkRscpress() {
 						title = (c as any).children[0].value;
 						node.children.shift();
 					}
-					createCustomContainer(node, {
-						title: title,
-						className: node.name,
-					});
+					Object.assign(
+						node,
+						hJsx(
+							"components.CustomContainer",
+							{
+								type: node.name,
+								title,
+							},
+							node.children,
+						),
+					);
 					return;
 				}
 
@@ -228,10 +226,18 @@ function remarkRscpress() {
 							value: text.slice(match[0].length),
 						};
 						const title = match[1];
-						createCustomContainer(node, {
-							title,
-							className: `github-alert ${title.toLocaleLowerCase()}`,
-						});
+						Object.assign(
+							node,
+							hJsx(
+								"components.CustomContainer",
+								{
+									type: title.toLowerCase(),
+									title,
+									github: hEstree("mdxJsxAttributeValueExpression", "true"),
+								},
+								node.children,
+							),
+						);
 					}
 				}
 			}
@@ -245,6 +251,23 @@ function remarkRscpress() {
 		);
 
 		await Promise.all(asyncTaskResults);
+	};
+}
+
+function hJsx(
+	name: string,
+	attributes: Record<string, MdxJsxAttribute["value"]>,
+	children: any,
+) {
+	return {
+		type: "mdxJsxFlowElement",
+		name,
+		attributes: Object.entries(attributes).map(([key, value]) => ({
+			type: "mdxJsxAttribute",
+			name: key,
+			value,
+		})),
+		children,
 	};
 }
 
@@ -263,33 +286,6 @@ function hEstree(
 			estree,
 		},
 	} as any;
-}
-
-function createCustomContainer(
-	node: Parent,
-	options: {
-		title: string;
-		className: string;
-	},
-) {
-	const newNode: MdxJsxFlowElement = {
-		type: "mdxJsxFlowElement",
-		name: "components.CustomContainer",
-		attributes: [
-			{
-				type: "mdxJsxAttribute",
-				name: "className",
-				value: options.className,
-			},
-			{
-				type: "mdxJsxAttribute",
-				name: "title",
-				value: options.title,
-			},
-		],
-		children: node.children as any,
-	};
-	Object.assign(node, newNode);
 }
 
 const CODE_TITLE_RE = /\[([^\]]+)\]/;

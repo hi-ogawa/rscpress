@@ -27,12 +27,19 @@ export function CodeGroup(props: {
 }
 
 export function CustomContainer(props: {
-	className?: string;
 	title?: string;
+	type?: string;
+	github?: boolean;
 	children?: React.ReactNode;
 }) {
 	return (
-		<div className={cls("custom-block", props.className)}>
+		<div
+			className={cls(
+				"custom-block",
+				props.type,
+				props.github && "github-alert",
+			)}
+		>
 			<p className="custom-block-title">{props.title}</p>
 			{props.children}
 		</div>
