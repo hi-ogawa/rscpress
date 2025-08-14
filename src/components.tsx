@@ -16,3 +16,18 @@ export function CodeGroup(props: {
 export function TestBuiltin(props: { test: string }) {
 	return <div>test-build: {props.test}</div>;
 }
+
+export function CustomContainer(props: {
+	className?: string;
+	title?: string;
+	children?: React.ReactNode;
+}) {
+	return (
+		<div className={cls("custom-block", props.className)}>
+			<p className="custom-block-title">{props.title}</p>
+			{props.children}
+		</div>
+	);
+}
+
+const cls = (...args: any[]) => args.filter(Boolean).join(" ");

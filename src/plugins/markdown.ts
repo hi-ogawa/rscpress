@@ -5,6 +5,7 @@ import rehypeShikiFromHighlighter, {
 	type RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
 import type { Code, Parent, Root } from "mdast";
+import type { MdxJsxFlowElement } from "mdast-util-mdx-jsx";
 import remarkDirective from "remark-directive";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
@@ -263,13 +264,6 @@ function remarkRscpress() {
 			}
 		});
 
-		tree.children.unshift({
-			type: "mdxJsxFlowElement",
-			name: "components.TestBuiltin",
-			attributes: [],
-			children: [],
-		});
-
 		// https://github.com/web-infra-dev/rspress/blob/498ef224dc461570aa1859dc315e84aacac99648/packages/core/src/node/utils/getASTNodeImport.ts
 		const importId = "@hiogawa/rscpress/components";
 		tree.children.unshift({
@@ -311,22 +305,24 @@ function createCustomContainer(
 		className: string;
 	},
 ) {
-	node.data ??= {};
-	node.data.hName = "div";
-	node.data.hProperties = {
-		class: `custom-block ${options.className}`,
-	};
-	node.children.unshift({
-		type: "html",
-		value: "",
-		data: {
-			hName: "p",
-			hProperties: {
-				class: "custom-block-title",
+	const newNode: MdxJsxFlowElement = {
+		type: "mdxJsxFlowElement",
+		name: "components.CustomContainer",
+		attributes: [
+			{
+				type: "mdxJsxAttribute",
+				name: "className",
+				value: options.className,
 			},
-			hChildren: [{ type: "text", value: options.title }],
-		},
-	});
+			{
+				type: "mdxJsxAttribute",
+				name: "title",
+				value: options.title,
+			},
+		],
+		children: node.children as any,
+	};
+	Object.assign(node, newNode);
 }
 
 const CODE_TITLE_RE = /\[([^\]]+)\]/;
