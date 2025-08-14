@@ -263,6 +263,13 @@ function remarkRscpress() {
 			}
 		});
 
+		tree.children.unshift({
+			type: "mdxJsxFlowElement",
+			name: "components.TestBuiltin",
+			attributes: [],
+			children: [],
+		});
+
 		// https://github.com/web-infra-dev/rspress/blob/498ef224dc461570aa1859dc315e84aacac99648/packages/core/src/node/utils/getASTNodeImport.ts
 		const importId = "@hiogawa/rscpress/components";
 		tree.children.unshift({
