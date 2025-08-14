@@ -6,7 +6,7 @@ export function CodeGroup(props: {
 	children?: React.ReactNode;
 }) {
 	return (
-		<div className="code-group">
+		<div className="vp-code-group">
 			<div className="tabs">
 				{props.titles.map((title, i) => (
 					<React.Fragment key={i}>

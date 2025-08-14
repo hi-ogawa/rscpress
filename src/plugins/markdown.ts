@@ -127,11 +127,6 @@ function remarkRscpress() {
 				node.type === "textDirective"
 			) {
 				if (node.name === "code-group") {
-					node.data ??= {};
-					node.data.hName = "div";
-					node.data.hProperties = {
-						class: `vp-code-group`,
-					};
 					const codes: Code[] = [];
 					for (const c of node.children) {
 						if (c.type !== "code") {
@@ -144,58 +139,54 @@ function remarkRscpress() {
 						(c) => (c.type === "code" && c.meta && getCodeTitle(c.meta)) || "",
 					);
 					const id = node.position?.start.offset!;
-					node.children = [
-						{
-							type: "html",
-							value: "",
-							data: {
-								hName: "div",
-								hProperties: {
-									class: `tabs`,
-								},
-								hChildren: titles.flatMap((title, i) => [
-									{
-										type: "element",
-										tagName: "input",
-										properties: {
-											type: "radio",
-											name: `group-${id}`,
-											id: `group-${id}:${i}`,
-											value: i,
-											defaultChecked: i === 0,
-										},
-										children: [],
-									},
-									// TODO: title icon https://github.com/yuyinws/vitepress-plugin-group-icons
-									{
-										type: "element",
-										tagName: "label",
-										properties: {
-											for: `group-${id}:${i}`,
-										},
-										children: [{ type: "text", value: title }],
-									},
-								]),
+					const newCodes = codes.map((c, i) => ({
+						...c,
+						// pass metadata to code highlighter transformer
+						meta: c.meta?.replace(
+							CODE_TITLE_RE,
+							(_, m) => `[code-group:${i}:${m}]`,
+						),
+					}));
+					const newNode: MdxJsxFlowElement = {
+						type: "mdxJsxFlowElement",
+						name: "components.CodeGroup",
+						attributes: [
+							{
+								type: "mdxJsxAttribute",
+								name: "id",
+								value: String(id),
 							},
-						},
-						{
-							type: "paragraph",
-							data: {
-								hName: "div",
-								hProperties: {
-									class: `blocks`,
+							{
+								type: "mdxJsxAttribute",
+								name: "titles",
+								value: {
+									type: "mdxJsxAttributeValueExpression",
+									value: `["${titles.join('", "')}"]`,
+									data: {
+										estree: {
+											type: "Program",
+											sourceType: "module",
+											body: [
+												{
+													type: "ExpressionStatement",
+													expression: {
+														type: "ArrayExpression",
+														elements: titles.map((title) => ({
+															type: "Literal",
+															value: title,
+															raw: JSON.stringify(title),
+														})),
+													},
+												},
+											],
+										},
+									},
 								},
 							},
-							children: codes.map((c, i) => ({
-								...c,
-								// pass metadata to code block
-								meta: c.meta?.replace(
-									CODE_TITLE_RE,
-									(_, m) => `[code-group:${i}:${m}]`,
-								),
-							})) as any,
-						},
-					];
+						],
+						children: newCodes,
+					};
+					Object.assign(node, newNode);
 					return;
 				}
 				if (node.name === "snippet") {
