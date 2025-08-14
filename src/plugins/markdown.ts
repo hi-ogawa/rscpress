@@ -4,6 +4,7 @@ import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-
 import rehypeShikiFromHighlighter, {
 	type RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
+import * as acorn from "acorn";
 import type { Code, Parent, Root } from "mdast";
 import type { MdxJsxFlowElement } from "mdast-util-mdx-jsx";
 import remarkDirective from "remark-directive";
@@ -161,25 +162,9 @@ function remarkRscpress() {
 								name: "titles",
 								value: {
 									type: "mdxJsxAttributeValueExpression",
-									value: `["${titles.join('", "')}"]`,
+									value: "",
 									data: {
-										estree: {
-											type: "Program",
-											sourceType: "module",
-											body: [
-												{
-													type: "ExpressionStatement",
-													expression: {
-														type: "ArrayExpression",
-														elements: titles.map((title) => ({
-															type: "Literal",
-															value: title,
-															raw: JSON.stringify(title),
-														})),
-													},
-												},
-											],
-										},
+										estree: parseEstree(`["${titles.join('", "')}"]`),
 									},
 								},
 							},
@@ -256,37 +241,25 @@ function remarkRscpress() {
 		});
 
 		// https://github.com/web-infra-dev/rspress/blob/498ef224dc461570aa1859dc315e84aacac99648/packages/core/src/node/utils/getASTNodeImport.ts
-		const importId = "@hiogawa/rscpress/components";
 		tree.children.unshift({
 			type: "mdxjsEsm",
-			value: `import * as components from ${JSON.stringify(importId)}`,
+			value: "",
 			data: {
-				estree: {
-					type: "Program",
-					sourceType: "module",
-					body: [
-						{
-							type: "ImportDeclaration",
-							specifiers: [
-								{
-									type: "ImportNamespaceSpecifier",
-									local: { type: "Identifier", name: "components" },
-								},
-							],
-							source: {
-								type: "Literal",
-								value: importId,
-								raw: JSON.stringify(importId),
-							},
-							attributes: [],
-						},
-					],
-				},
+				estree: parseEstree(
+					`import * as components from ${JSON.stringify("@hiogawa/rscpress/components")}`,
+				),
 			},
 		});
 
 		await Promise.all(asyncTaskResults);
 	};
+}
+
+function parseEstree(code: string) {
+	return acorn.Parser.parse(code, {
+		ecmaVersion: "latest",
+		sourceType: "module",
+	}) as any;
 }
 
 function createCustomContainer(
