@@ -1,20 +1,29 @@
-import type React from "react";
+import React from "react";
 
 export function CodeGroup(props: {
-	blocks: Record<string, React.ReactNode>;
+	id: string;
+	titles: string[];
 	children?: React.ReactNode;
 }) {
-	console.log(props.blocks);
 	return (
-		<div>
-			TODO: CodeGroup
-			<div>{props.children}</div>
+		<div className="code-group">
+			<div className="tabs">
+				{props.titles.map((title, i) => (
+					<React.Fragment key={i}>
+						<input
+							type="radio"
+							name={`group-${props.id}`}
+							id={`group-${props.id}:${i}`}
+							value={i}
+							defaultChecked={i === 0}
+						/>
+						<label htmlFor={`group-${props.id}:${i}`}>{title}</label>
+					</React.Fragment>
+				))}
+			</div>
+			<div className="blocks">{props.children}</div>
 		</div>
 	);
-}
-
-export function TestBuiltin(props: { test: string }) {
-	return <div>test-build: {props.test}</div>;
 }
 
 export function CustomContainer(props: {

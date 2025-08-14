@@ -2,9 +2,7 @@
 
 ## Component
 
-<components.TestBuiltin test="ok" />
-
-<components.CodeGroup blocks={{ npm: "foo", pnpm: "bar" }}>
+<components.CodeGroup id="xxx" titles={["npm", "pnpm"]}>
 
 ```sh [npm]
 $ npm add -D vitepress
