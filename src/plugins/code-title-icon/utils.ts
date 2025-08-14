@@ -7,6 +7,7 @@ import {
 } from "@iconify/utils";
 import { builtinIcons } from "./builtin.ts";
 
+// for now load them all
 export async function generateCss() {
 	let css = "";
 	for (const [label, icon] of Object.entries(builtinIcons)) {

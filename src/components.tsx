@@ -1,8 +1,6 @@
 import React from "react";
 import { getCodeTitleIcon } from "./plugins/code-title-icon/utils";
 
-// TODO: code block title icon https://github.com/yuyinws/vitepress-plugin-group-icons
-
 export function CodeGroup(props: {
 	id: string;
 	titles: string[];
