@@ -12,9 +12,9 @@ export const builtinIcons = {
 	react: "vscode-icons:file-type-reactjs",
 	next: "vscode-icons:file-type-light-next",
 	nuxt: "vscode-icons:file-type-nuxt",
-	// solid: "logos:solidjs-icon",
+	solid: "logos:solidjs-icon",
 	astro: "vscode-icons:file-type-light-astro",
-	// qwik: "logos:qwik-icon",
+	qwik: "logos:qwik-icon",
 	// bundlers
 	rollup: "vscode-icons:file-type-rollup",
 	webpack: "vscode-icons:file-type-webpack",
