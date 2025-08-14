@@ -5,7 +5,7 @@ import rehypeShikiFromHighlighter, {
 	type RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
 import * as acorn from "acorn";
-import type { Code, Parent, Root } from "mdast";
+import type { Code, Root } from "mdast";
 import type { MdxJsxAttribute, MdxJsxFlowElement } from "mdast-util-mdx-jsx";
 import remarkDirective from "remark-directive";
 import remarkFrontmatter from "remark-frontmatter";
@@ -258,7 +258,7 @@ function hJsx(
 	name: string,
 	attributes: Record<string, MdxJsxAttribute["value"]>,
 	children: any,
-) {
+): MdxJsxFlowElement {
 	return {
 		type: "mdxJsxFlowElement",
 		name,
