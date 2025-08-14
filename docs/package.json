@@ -4,9 +4,9 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "vite --config-loader=native",
-		"build": "vite --config-loader=native build",
-		"preview": "vite --config-loader=native preview"
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview"
 	},
 	"devDependencies": {
 		"@hiogawa/rscpress": "workspace:*",
