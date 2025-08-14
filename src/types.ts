@@ -19,3 +19,30 @@ export type SsgData = {
 declare global {
 	var __rscpress_ssg: SsgData | undefined;
 }
+
+export type RscpressConfig = {
+	srcDir?: string;
+	title?: string;
+	description?: string;
+	themeConfig?: {
+		nav?: NavItem[];
+		sidebar?: SidebarItem[];
+	}
+};
+
+export type NavItem = {
+	text: string;
+	link: string
+};
+
+export type SidebarItem = SidebarItemList | SidebarItemLink;
+
+export type SidebarItemList = {
+	text: string;
+	items: SidebarItem[];
+}
+
+export type SidebarItemLink = {
+	text: string;
+	link: string;
+}
