@@ -1,5 +1,7 @@
 import React from "react";
 
+// TODO: code block title icon https://github.com/yuyinws/vitepress-plugin-group-icons
+
 export function CodeGroup(props: {
 	id: string;
 	titles: string[];
@@ -47,3 +49,37 @@ export function CustomContainer(props: {
 }
 
 const cls = (...args: any[]) => args.filter(Boolean).join(" ");
+
+export function CodeBlock(props: {
+	lang: string;
+	title: string;
+	children?: React.ReactNode;
+}) {
+	const { lang, title } = props;
+	let node = (
+		<div
+			className={cls(
+				`language-${lang}`,
+				title.startsWith("code-group:") && "code-group-block",
+				title.startsWith("code-group:0:") && "active",
+			)}
+		>
+			<button className="copy"></button>
+			<span className="lang">{lang}</span>
+			{props.children}
+		</div>
+	);
+
+	if (title && !title.startsWith("code-group:")) {
+		node = (
+			<div className="vp-code-block-title">
+				<div className="vp-code-block-title-bar">
+					<span className="vp-code-block-title-text">{title}</span>
+				</div>
+				{node}
+			</div>
+		);
+	}
+
+	return node;
+}
