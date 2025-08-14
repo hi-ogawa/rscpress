@@ -160,13 +160,10 @@ function remarkRscpress() {
 							{
 								type: "mdxJsxAttribute",
 								name: "titles",
-								value: {
-									type: "mdxJsxAttributeValueExpression",
-									value: "",
-									data: {
-										estree: parseEstree(`["${titles.join('", "')}"]`),
-									},
-								},
+								value: hEstree(
+									"mdxJsxAttributeValueExpression",
+									JSON.stringify(titles),
+								),
 							},
 						],
 						children: newCodes,
@@ -240,26 +237,32 @@ function remarkRscpress() {
 			}
 		});
 
-		// https://github.com/web-infra-dev/rspress/blob/498ef224dc461570aa1859dc315e84aacac99648/packages/core/src/node/utils/getASTNodeImport.ts
-		tree.children.unshift({
-			type: "mdxjsEsm",
-			value: "",
-			data: {
-				estree: parseEstree(
-					`import * as components from ${JSON.stringify("@hiogawa/rscpress/components")}`,
-				),
-			},
-		});
+		tree.children.unshift(
+			hEstree(
+				"mdxjsEsm",
+				`import * as components from ${JSON.stringify("@hiogawa/rscpress/components")}`,
+			),
+		);
 
 		await Promise.all(asyncTaskResults);
 	};
 }
 
-function parseEstree(code: string) {
-	return acorn.Parser.parse(code, {
+function hEstree(
+	type: "mdxjsEsm" | "mdxJsxAttributeValueExpression",
+	value: string,
+) {
+	const estree = acorn.Parser.parse(value, {
 		ecmaVersion: "latest",
 		sourceType: "module",
-	}) as any;
+	});
+	return {
+		type,
+		value: value,
+		data: {
+			estree,
+		},
+	} as any;
 }
 
 function createCustomContainer(
