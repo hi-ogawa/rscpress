@@ -1,19 +1,5 @@
 # Test
 
-## Component
-
-<components.CodeGroup id="xxx" titles={["npm", "pnpm"]}>
-
-```sh [npm]
-$ npm add -D vitepress
-```
-
-```sh [pnpm]
-$ pnpm add -D vitepress
-```
-
-</components.CodeGroup>
-
 ## Code group
 
 :::code-group
