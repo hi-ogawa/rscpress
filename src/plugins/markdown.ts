@@ -338,15 +338,15 @@ function createRscpressTransformer(): ShikiTransformer[] {
 				//   div.language-<lang>
 				//     {...}
 
-				let codeBlock = {
+				let codeBlock: import("hast").Element = {
 					type: "element",
 					tagName: "div",
 					properties: {
 						className: [
 							`language-${lang}`,
-							title.startsWith("code-group:") && "code-group-block",
-							title.startsWith("code-group:0:") && "active",
-						].filter(Boolean),
+							title.startsWith("code-group:") ? "code-group-block" : "",
+							title.startsWith("code-group:0:") ? "active" : "",
+						],
 					},
 					children: [
 						{
