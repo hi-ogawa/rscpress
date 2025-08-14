@@ -8,3 +8,7 @@ declare module "virtual:rscpress:routes" {
 	const default_: Record<string, () => Promise<import("./types").RouteModule>>;
 	export default default_;
 }
+
+declare module "virtual:rscpress:code-title-icon" {
+	export const icons: Record<string, string>;
+}
