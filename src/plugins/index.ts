@@ -5,16 +5,17 @@ import { pathToFileURL } from "node:url";
 import react from "@vitejs/plugin-react";
 import rsc, { type RscPluginOptions } from "@vitejs/plugin-rsc";
 import { type Connect, type Plugin, type ResolvedConfig } from "vite";
-import { RSC_POSTFIX } from "../framework/shared";
-import type { SsgData } from "../types";
-import { markdownPlugin } from "./markdown";
+import { RSC_POSTFIX } from "../framework/shared.ts";
+import type { SsgData } from "../types.ts";
+import { markdownPlugin } from "./markdown.ts";
 
 export default function rscpress(): Plugin[] {
+	const entryDir = path.join(import.meta.dirname, "../framework");
 	const rscPluginOptions: RscPluginOptions = {
 		entries: {
-			rsc: "./src/lib/framework/entry.rsc.tsx",
-			ssr: "./src/lib/framework/entry.ssr.tsx",
-			client: "./src/lib/framework/entry.browser.tsx",
+			rsc: path.join(entryDir, "entry.rsc.tsx"),
+			ssr: path.join(entryDir, "entry.ssr.tsx"),
+			client: path.join(entryDir, "entry.browser.tsx"),
 		},
 		useBuildAppHook: true,
 	};
@@ -32,7 +33,7 @@ export default function rscpress(): Plugin[] {
 		...rsc(rscPluginOptions),
 		...markdownPlugin(),
 		createVirtualPlugin("rscpress:routes", async function () {
-			const globBase = "/src/example";
+			const globBase = "";
 			const globPattern = `${globBase}/**/*.{md,mdx}`;
 			function normalizeGlob(glob: Record<string, unknown>, globBase: string) {
 				return Object.fromEntries(
@@ -100,6 +101,7 @@ async function renderStatic(config: ResolvedConfig) {
 	// import server entry
 	const entryPath = path.join(config.environments.rsc.build.outDir, "index.js");
 	const entry: typeof import("../framework/entry.rsc") = await import(
+		/* @vite-ignore */
 		pathToFileURL(entryPath).href
 	);
 

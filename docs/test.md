@@ -20,7 +20,7 @@ $ yarn add -D vitepress
 
 ## Snippet
 
-::snippet[./snippets/test.ts]
+::snippet[/snippets/test.ts]
 
 ## Custom container
 
