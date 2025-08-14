@@ -3,6 +3,6 @@
 @import "./vp-doc.css";
 @import "./vp-code.css";
 @import "./custom-block.css";
-@import "./code-block-title.css";
 @import "./vp-code-group.css";
 @import "./icons.css";
+@import "../plugins/code-title-icon/styles.css";

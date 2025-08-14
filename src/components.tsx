@@ -1,6 +1,5 @@
 import React from "react";
-
-// TODO: code block title icon https://github.com/yuyinws/vitepress-plugin-group-icons
+import { getCodeTitleIcon } from "./plugins/code-title-icon/utils";
 
 export function CodeGroup(props: {
 	id: string;
@@ -19,7 +18,12 @@ export function CodeGroup(props: {
 							value={i}
 							defaultChecked={i === 0}
 						/>
-						<label htmlFor={`group-${props.id}:${i}`}>{title}</label>
+						<label
+							htmlFor={`group-${props.id}:${i}`}
+							data-title={getCodeTitleIcon(title)}
+						>
+							{title}
+						</label>
 					</React.Fragment>
 				))}
 			</div>
@@ -74,7 +78,12 @@ export function CodeBlock(props: {
 		node = (
 			<div className="vp-code-block-title">
 				<div className="vp-code-block-title-bar">
-					<span className="vp-code-block-title-text">{title}</span>
+					<span
+						className="vp-code-block-title-text"
+						data-title={getCodeTitleIcon(title)}
+					>
+						{title}
+					</span>
 				</div>
 				{node}
 			</div>

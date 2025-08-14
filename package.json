@@ -20,6 +20,9 @@
 		"lint-check": "biome check ."
 	},
 	"dependencies": {
+		"@iconify-json/logos": "^1.2.9",
+		"@iconify-json/vscode-icons": "^1.2.29",
+		"@iconify/utils": "^3.0.1",
 		"@mdx-js/mdx": "^3.1.0",
 		"@shikijs/langs": "^3.9.2",
 		"@shikijs/rehype": "^3.9.2",
@@ -39,6 +42,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.1.4",
+		"@hiogawa/utils": "^1.7.0",
 		"@playwright/test": "^1.54.2",
 		"@types/hast": "^3.0.4",
 		"@types/mdast": "^4.0.4",
