@@ -295,10 +295,12 @@ function createRscpressShikiTransformer(): ShikiTransformer[] {
 			name: "vitepress:wrapper",
 			pre(node) {
 				node.properties.dir = "ltr";
-				this.addClassToHast(node, "shiki");
-				this.addClassToHast(node, "shiki-themes");
-				this.addClassToHast(node, "github-light");
-				this.addClassToHast(node, "github-dark");
+				this.addClassToHast(node, [
+					"shiki",
+					"shiki-themes",
+					"github-light",
+					"github-dark",
+				]);
 			},
 			code(node) {
 				this.addClassToHast(node, "vp-code");
