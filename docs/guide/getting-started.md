@@ -6,20 +6,6 @@ You can try VitePress directly in your browser on [StackBlitz](https://vitepress
 
 ## Installation
 
-<components.TestBuiltin test="ok" />
-
-<components.CodeGroup blocks={{ npm: "foo", pnpm: "bar" }}>
-
-```sh [npm]
-$ npm add -D vitepress
-```
-
-```sh [pnpm]
-$ pnpm add -D vitepress
-```
-
-</components.CodeGroup>
-
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) version 18 or higher.
@@ -53,7 +39,7 @@ $ bun add -D vitepress
 
 :::
 
-::: tip NOTE
+:::tip[NOTE]
 
 VitePress is an ESM-only package. Don't use `require()` to import it, and make sure your nearest `package.json` contains `"type": "module"`, or change the file extension of your relevant files like `.vitepress/config.js` to `.mjs`/`.mts`. Refer to [Vite's troubleshooting guide](http://vitejs.dev/guide/troubleshooting.html#this-package-is-esm-only) for more details. Also, inside async CJS contexts, you can use `await import('vitepress')` instead.
 
@@ -85,9 +71,9 @@ $ bun vitepress init
 
 You will be greeted with a few simple questions:
 
-::snippet[src/example/snippets/init.ansi]
+::snippet[/snippets/init.ansi]{title=""}
 
-::: tip Vue as Peer Dependency
+:::tip[Vue as Peer Dependency]
 If you intend to perform customization that uses Vue components or APIs, you should also explicitly install `vue` as a dependency.
 :::
 
@@ -110,8 +96,9 @@ Assuming you chose to scaffold the VitePress project in `./docs`, the generated 
 
 The `docs` directory is considered the **project root** of the VitePress site. The `.vitepress` directory is a reserved location for VitePress' config file, dev server cache, build output, and optional theme customization code.
 
-> [!TIP]
-> By default, VitePress stores its dev server cache in `.vitepress/cache`, and the production build output in `.vitepress/dist`. If using Git, you should add them to your `.gitignore` file. These locations can also be [configured](../reference/site-config#outdir).
+:::tip
+By default, VitePress stores its dev server cache in `.vitepress/cache`, and the production build output in `.vitepress/dist`. If using Git, you should add them to your `.gitignore` file. These locations can also be [configured](../reference/site-config#outdir).
+:::
 
 ### The Config File
 

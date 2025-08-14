@@ -1,17 +1,15 @@
 import { expect, type Page, test } from "@playwright/test";
-import * as vite from "vite";
-import { waitForHydration } from "./helper";
+import { type Cli, runCli, waitForHydration } from "./helper";
 
 test.describe("dev", () => {
-	let server: vite.ViteDevServer;
+	let cli: Cli;
 	let url: string;
 	test.beforeAll(async () => {
-		server = await vite.createServer();
-		await server.listen();
-		url = server.resolvedUrls?.local[0]!;
+		cli = runCli({ command: "pnpm dev" });
+		url = await cli.getServerUrl();
 	});
 	test.afterAll(async () => {
-		await server?.close();
+		cli.kill();
 	});
 
 	test("basic", async ({ page }) => {
@@ -21,16 +19,16 @@ test.describe("dev", () => {
 });
 
 test.describe("build", () => {
-	let server: vite.PreviewServer;
+	let cli: Cli;
 	let url: string;
 	test.beforeAll(async () => {
-		const builder = await vite.createBuilder();
-		await builder.buildApp();
-		server = await vite.preview();
-		url = server.resolvedUrls?.local[0]!;
+		const build = runCli({ command: "pnpm build", throwOnError: true });
+		await build.done;
+		cli = runCli({ command: "pnpm preview" });
+		url = await cli.getServerUrl();
 	});
 	test.afterAll(async () => {
-		await server?.close();
+		cli.kill();
 	});
 
 	test("basic", async ({ page }) => {

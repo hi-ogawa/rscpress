@@ -4,7 +4,7 @@ import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-
 import rehypeShikiFromHighlighter, {
 	type RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
-import type { Code, Root } from "mdast";
+import type { Code, Parent, Root } from "mdast";
 import remarkDirective from "remark-directive";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
@@ -14,8 +14,15 @@ import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import { visit } from "unist-util-visit";
 import { VFile } from "vfile";
-import type { Plugin } from "vite";
-import { remarkContainerSyntax } from "./mdx/remarkPlugins/containerSyntax";
+import type { Plugin, Rollup } from "vite";
+
+declare module "vfile" {
+	interface DataMap {
+		rscpress: {
+			ctx: Rollup.TransformPluginContext;
+		};
+	}
+}
 
 export function markdownPlugin(): Plugin[] {
 	// https://github.com/mdx-js/mdx/blob/2b3381a8962dc888c0f2ed181cf80c6a1140b662/packages/rollup/lib/index.js
@@ -35,6 +42,7 @@ export function markdownPlugin(): Plugin[] {
 						// TODO: warning if used language is not loaded
 						import("@shikijs/langs/json"),
 						import("@shikijs/langs/javascript"),
+						import("@shikijs/langs/typescript"),
 						import("@shikijs/langs/shell"),
 					],
 					engine: createOnigurumaEngine(() => import("shiki/wasm")),
@@ -43,11 +51,10 @@ export function markdownPlugin(): Plugin[] {
 					format: "mdx",
 					remarkPlugins: [
 						remarkGfm,
-						remarkContainerSyntax,
 						remarkDirective,
 						remarkFrontmatter,
 						remarkMdxFrontmatter,
-						remarkCustom,
+						remarkRscpress,
 					],
 					rehypePlugins: [
 						// https://shiki.style/packages/rehype
@@ -62,7 +69,7 @@ export function markdownPlugin(): Plugin[] {
 								defaultColor: false,
 								addLanguageClass: true,
 								defaultLanguage: "text",
-								transformers: createVitepressTransformer(),
+								transformers: createRscpressTransformer(),
 							} satisfies RehypeShikiCoreOptions,
 						],
 					],
@@ -77,14 +84,17 @@ export function markdownPlugin(): Plugin[] {
 				const { filename, query } = parseIdQuery(id);
 				if (!("mdx" in query)) return;
 
-				// convert vitepress style directive to remark-directive
-				// "::: code-group" => ":::code-group"
-				// TODO: "">>>snippet" => "::snippet"
-				// TODO: "::: tip" => ":::tip"
-				code = code.replace(/^::: code-group\b/gm, ":::code-group ");
-
-				const file = new VFile({ path: filename, value: code });
+				const file = new VFile({
+					path: filename,
+					value: code,
+					data: {
+						rscpress: { ctx: this },
+					},
+				});
 				const compiled = await processors.process(file);
+				for (const message of compiled.messages) {
+					this.warn(message.message);
+				}
 				const output = String(compiled.value);
 				return output;
 			},
@@ -92,8 +102,22 @@ export function markdownPlugin(): Plugin[] {
 	];
 }
 
-function remarkCustom() {
-	return function (tree: Root, file: VFile) {
+// https://vitepress.dev/guide/markdown#custom-containers
+const CUSTOM_BLOCKS = ["info", "tip", "warning", "danger", "details"];
+
+// https://vitepress.dev/guide/markdown#github-flavored-alerts
+const GITHUB_ALERTS = ["NOTE", "TIP", "IMPORTANT", "WARNING", "CAUTION"];
+const GITHUB_ALERTS_RE = new RegExp(`^\\[!(${GITHUB_ALERTS.join("|")})\\]\n`);
+
+function remarkRscpress() {
+	return async function (tree: Root, file: VFile) {
+		const { ctx } = file.data.rscpress!;
+		const asyncTaskResults: Promise<void>[] = [];
+
+		function pushTask(task: () => Promise<void>) {
+			asyncTaskResults.push(task());
+		}
+
 		visit(tree, function (node) {
 			// https://github.com/remarkjs/remark-directive/
 			if (
@@ -178,28 +202,72 @@ function remarkCustom() {
 					if (!value) {
 						file.info("Invalid 'snippet' directive");
 					}
-					// TODO: use vite resolve and raw loader
-					const filePath = path.resolve(value);
-					const data = fs.readFileSync(filePath, "utf-8");
-					node.children = [
-						{
-							type: "code",
-							lang: path.extname(filePath).slice(1) || "text",
-							// TODO: meta
-							// meta: `[${path.basename(file)}]`,
-							value: data,
-						},
-					];
+					const code: Code = {
+						type: "code",
+						lang: "text",
+						value: `(snippet:${value})`,
+					};
+					pushTask(async () => {
+						const resolved = await ctx.resolve(value, file.path);
+						if (!resolved) {
+							file.info("Failed to resolve snippet file: " + value);
+							return;
+						}
+						const id = resolved.id;
+						const content = fs.readFileSync(id, "utf-8");
+						code.lang = path.extname(id).slice(1);
+						code.value = content;
+						const title = node.attributes?.title ?? path.basename(id);
+						code.meta = `[${title}]`;
+					});
+					node.children = [code];
 					return;
 				}
+
+				if (CUSTOM_BLOCKS.includes(node.name)) {
+					let title = node.name.toUpperCase();
+					const c = node.children[0];
+					if (c.data && "directiveLabel" in c.data) {
+						// custom title in directive label
+						title = (c as any).children[0].value;
+						node.children.shift();
+					}
+					createCustomContainer(node, {
+						title: title,
+						className: node.name,
+					});
+					return;
+				}
+
 				file.info("Unknown directive: " + node.name);
+			}
+
+			// https://vitepress.dev/guide/markdown#github-flavored-alerts
+			if (node.type === "blockquote") {
+				const p = node.children[0];
+				if (p?.type === "paragraph" && p.children[0]?.type === "text") {
+					const text = p.children[0].value;
+					const match = text.match(GITHUB_ALERTS_RE);
+					if (match) {
+						p.children[0] = {
+							type: "text",
+							value: text.slice(match[0].length),
+						};
+						const title = match[1];
+						createCustomContainer(node, {
+							title,
+							className: `github-alert ${title.toLocaleLowerCase()}`,
+						});
+					}
+				}
 			}
 		});
 
 		// https://github.com/web-infra-dev/rspress/blob/498ef224dc461570aa1859dc315e84aacac99648/packages/core/src/node/utils/getASTNodeImport.ts
+		const importId = "@hiogawa/rscpress/components";
 		tree.children.unshift({
 			type: "mdxjsEsm",
-			value: `import * as components from ${JSON.stringify("/src/lib/components.tsx")}`,
+			value: `import * as components from ${JSON.stringify(importId)}`,
 			data: {
 				estree: {
 					type: "Program",
@@ -215,8 +283,8 @@ function remarkCustom() {
 							],
 							source: {
 								type: "Literal",
-								value: "/src/lib/components.tsx",
-								raw: JSON.stringify("/src/lib/components.tsx"),
+								value: importId,
+								raw: JSON.stringify(importId),
 							},
 							attributes: [],
 						},
@@ -224,7 +292,34 @@ function remarkCustom() {
 				},
 			},
 		});
+
+		await Promise.all(asyncTaskResults);
 	};
+}
+
+function createCustomContainer(
+	node: Parent,
+	options: {
+		title: string;
+		className: string;
+	},
+) {
+	node.data ??= {};
+	node.data.hName = "div";
+	node.data.hProperties = {
+		class: `custom-block ${options.className}`,
+	};
+	node.children.unshift({
+		type: "html",
+		value: "",
+		data: {
+			hName: "p",
+			hProperties: {
+				class: "custom-block-title",
+			},
+			hChildren: [{ type: "text", value: options.title }],
+		},
+	});
 }
 
 const CODE_TITLE_RE = /\[([^\]]+)\]/;
@@ -251,7 +346,7 @@ function parseIdQuery(id: string): {
 }
 
 // https://shiki.style/guide/transformers
-function createVitepressTransformer(): ShikiTransformer[] {
+function createRscpressTransformer(): ShikiTransformer[] {
 	return [
 		{
 			name: "vitepress:wrapper",
