@@ -4,7 +4,9 @@ import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-
 import rehypeShikiFromHighlighter, {
 	type RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
-import type { Code, Parent, Root } from "mdast";
+import * as acorn from "acorn";
+import type { Code, Root } from "mdast";
+import type { MdxJsxAttribute, MdxJsxFlowElement } from "mdast-util-mdx-jsx";
 import remarkDirective from "remark-directive";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
@@ -126,11 +128,6 @@ function remarkRscpress() {
 				node.type === "textDirective"
 			) {
 				if (node.name === "code-group") {
-					node.data ??= {};
-					node.data.hName = "div";
-					node.data.hProperties = {
-						class: `vp-code-group`,
-					};
 					const codes: Code[] = [];
 					for (const c of node.children) {
 						if (c.type !== "code") {
@@ -143,58 +140,26 @@ function remarkRscpress() {
 						(c) => (c.type === "code" && c.meta && getCodeTitle(c.meta)) || "",
 					);
 					const id = node.position?.start.offset!;
-					node.children = [
+					const newCodes = codes.map((c, i) => ({
+						...c,
+						// pass metadata to code highlighter transformer
+						meta: c.meta?.replace(
+							CODE_TITLE_RE,
+							(_, m) => `[code-group:${i}:${m}]`,
+						),
+					}));
+					const newNode = hJsx(
+						"components.CodeGroup",
 						{
-							type: "html",
-							value: "",
-							data: {
-								hName: "div",
-								hProperties: {
-									class: `tabs`,
-								},
-								hChildren: titles.flatMap((title, i) => [
-									{
-										type: "element",
-										tagName: "input",
-										properties: {
-											type: "radio",
-											name: `group-${id}`,
-											id: `group-${id}:${i}`,
-											value: i,
-											defaultChecked: i === 0,
-										},
-										children: [],
-									},
-									// TODO: title icon https://github.com/yuyinws/vitepress-plugin-group-icons
-									{
-										type: "element",
-										tagName: "label",
-										properties: {
-											for: `group-${id}:${i}`,
-										},
-										children: [{ type: "text", value: title }],
-									},
-								]),
-							},
+							id: String(id),
+							titles: hEstree(
+								"mdxJsxAttributeValueExpression",
+								JSON.stringify(titles),
+							),
 						},
-						{
-							type: "paragraph",
-							data: {
-								hName: "div",
-								hProperties: {
-									class: `blocks`,
-								},
-							},
-							children: codes.map((c, i) => ({
-								...c,
-								// pass metadata to code block
-								meta: c.meta?.replace(
-									CODE_TITLE_RE,
-									(_, m) => `[code-group:${i}:${m}]`,
-								),
-							})) as any,
-						},
-					];
+						newCodes,
+					);
+					Object.assign(node, newNode);
 					return;
 				}
 				if (node.name === "snippet") {
@@ -232,10 +197,17 @@ function remarkRscpress() {
 						title = (c as any).children[0].value;
 						node.children.shift();
 					}
-					createCustomContainer(node, {
-						title: title,
-						className: node.name,
-					});
+					Object.assign(
+						node,
+						hJsx(
+							"components.CustomContainer",
+							{
+								type: node.name,
+								title,
+							},
+							node.children,
+						),
+					);
 					return;
 				}
 
@@ -254,42 +226,66 @@ function remarkRscpress() {
 							value: text.slice(match[0].length),
 						};
 						const title = match[1];
-						createCustomContainer(node, {
-							title,
-							className: `github-alert ${title.toLocaleLowerCase()}`,
-						});
+						Object.assign(
+							node,
+							hJsx(
+								"components.CustomContainer",
+								{
+									type: title.toLowerCase(),
+									title,
+									github: hEstree("mdxJsxAttributeValueExpression", "true"),
+								},
+								node.children,
+							),
+						);
 					}
 				}
 			}
 		});
 
+		tree.children.unshift(
+			hEstree(
+				"mdxjsEsm",
+				`import * as components from ${JSON.stringify("@hiogawa/rscpress/components")}`,
+			),
+		);
+
 		await Promise.all(asyncTaskResults);
 	};
 }
 
-function createCustomContainer(
-	node: Parent,
-	options: {
-		title: string;
-		className: string;
-	},
-) {
-	node.data ??= {};
-	node.data.hName = "div";
-	node.data.hProperties = {
-		class: `custom-block ${options.className}`,
+function hJsx(
+	name: string,
+	attributes: Record<string, MdxJsxAttribute["value"]>,
+	children: any,
+): MdxJsxFlowElement {
+	return {
+		type: "mdxJsxFlowElement",
+		name,
+		attributes: Object.entries(attributes).map(([key, value]) => ({
+			type: "mdxJsxAttribute",
+			name: key,
+			value,
+		})),
+		children,
 	};
-	node.children.unshift({
-		type: "html",
-		value: "",
-		data: {
-			hName: "p",
-			hProperties: {
-				class: "custom-block-title",
-			},
-			hChildren: [{ type: "text", value: options.title }],
-		},
+}
+
+function hEstree(
+	type: "mdxjsEsm" | "mdxJsxAttributeValueExpression",
+	value: string,
+) {
+	const estree = acorn.Parser.parse(value, {
+		ecmaVersion: "latest",
+		sourceType: "module",
 	});
+	return {
+		type,
+		value: value,
+		data: {
+			estree,
+		},
+	} as any;
 }
 
 const CODE_TITLE_RE = /\[([^\]]+)\]/;
@@ -342,15 +338,15 @@ function createRscpressTransformer(): ShikiTransformer[] {
 				//   div.language-<lang>
 				//     {...}
 
-				let codeBlock = {
+				let codeBlock: import("hast").Element = {
 					type: "element",
 					tagName: "div",
 					properties: {
 						className: [
 							`language-${lang}`,
-							title.startsWith("code-group:") && "code-group-block",
-							title.startsWith("code-group:0:") && "active",
-						].filter(Boolean),
+							title.startsWith("code-group:") ? "code-group-block" : "",
+							title.startsWith("code-group:0:") ? "active" : "",
+						],
 					},
 					children: [
 						{

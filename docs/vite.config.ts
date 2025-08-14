@@ -6,5 +6,6 @@ import inspect from "vite-plugin-inspect";
 import rscpress from "../src/plugin";
 
 export default defineConfig({
+	clearScreen: false,
 	plugins: [rscpress(), inspect()],
 });
