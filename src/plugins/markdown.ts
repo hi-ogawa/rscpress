@@ -53,7 +53,7 @@ export function markdownPlugin(): Plugin[] {
 								defaultColor: false,
 								addLanguageClass: true,
 								defaultLanguage: "text",
-								transformers: createRscpressTransformer(),
+								transformers: createRscpressShikiTransformer(),
 							} satisfies RehypeShikiOptions,
 						],
 					],
@@ -289,7 +289,7 @@ function parseIdQuery(id: string): {
 }
 
 // https://shiki.style/guide/transformers
-function createRscpressTransformer(): ShikiTransformer[] {
+function createRscpressShikiTransformer(): ShikiTransformer[] {
 	return [
 		{
 			name: "vitepress:wrapper",
