@@ -292,7 +292,7 @@ function parseIdQuery(id: string): {
 function createRscpressShikiTransformer(): ShikiTransformer[] {
 	return [
 		{
-			name: "vitepress:wrapper",
+			name: "rscpress",
 			pre(node) {
 				node.properties.dir = "ltr";
 				this.addClassToHast(node, [
