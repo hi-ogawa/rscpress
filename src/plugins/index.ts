@@ -32,8 +32,8 @@ export default function rscpress(): Plugin[] {
 		},
 		...react(),
 		...rsc(rscPluginOptions),
-		...markdownPlugin(),
 		...codeTitleIconPlugin(),
+		...markdownPlugin(),
 		createVirtualPlugin("rscpress:routes", async function () {
 			const globBase = "";
 			const globPattern = `${globBase}/**/*.{md,mdx}`;

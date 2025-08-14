@@ -7,6 +7,7 @@ export function codeTitleIconPlugin(pluginOptions?: {
 	customIcon?: Record<string, string>;
 }): Plugin[] {
 	const icons = { ...builtinIcons, ...pluginOptions?.customIcon };
+	const usedIcons = new Set<string>();
 	return [
 		{
 			name: "rscpress:code-title-icon",
@@ -22,7 +23,12 @@ export function codeTitleIconPlugin(pluginOptions?: {
 				// strip css `?direct` query
 				const { filename } = parseIdQuery(id);
 				if (filename === "\0virtual:rscpress:code-title-icon.css") {
-					// load them all for now
+					if (this.environment.mode === "build") {
+						// TODO
+						usedIcons;
+						return generateCss(icons);
+					}
+					// load all during dev
 					return generateCss(icons);
 				}
 
@@ -31,6 +37,21 @@ export function codeTitleIconPlugin(pluginOptions?: {
 export const icons = ${JSON.stringify(icons, null, 2)};
 `;
 				}
+			},
+		},
+		{
+			name: "rscpress:code-title-icon:collect",
+			transform: {
+				handler(code, id) {
+					// extract potential code block title from markdown
+					const { query } = parseIdQuery(id);
+					if ("mdx" in query) {
+						const matches = code.matchAll(/\[([^\[\]]+)\]/g);
+						const tokens = [...matches].map((m) => m[1]!);
+						console.log(tokens);
+						usedIcons.add;
+					}
+				},
 			},
 		},
 	];
