@@ -4,9 +4,14 @@ import { Readable } from "node:stream";
 import { pathToFileURL } from "node:url";
 import react from "@vitejs/plugin-react";
 import rsc, { type RscPluginOptions } from "@vitejs/plugin-rsc";
-import { type Connect, type Plugin, type ResolvedConfig } from "vite";
+import {
+	type Connect,
+	type Plugin,
+	type ResolvedConfig,
+	runnerImport,
+} from "vite";
 import { RSC_POSTFIX } from "../framework/shared.ts";
-import type { SsgData } from "../types.ts";
+import type { RscpressConfig, SsgData } from "../types.ts";
 import { markdownPlugin } from "./markdown.ts";
 
 export default function rscpress(): Plugin[] {
@@ -20,10 +25,16 @@ export default function rscpress(): Plugin[] {
 		useBuildAppHook: true,
 	};
 
+	let rscpressConfig: RscpressConfig = {};
+
 	return [
 		{
 			name: "rscpress:config",
-			config(_config, env) {
+			async config(_config, env) {
+				if (fs.existsSync("rscpress.config.js") || fs.existsSync("rscpress.config.ts")) {
+					const imported = await runnerImport<any>("rscpress.config");
+					rscpressConfig = imported.module;
+				}
 				if (env.isPreview) {
 					rscPluginOptions.serverHandler = false;
 				}
