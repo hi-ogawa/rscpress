@@ -1,9 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-aware-processors";
-import rehypeShikiFromHighlighter, {
-	type RehypeShikiCoreOptions,
-} from "@shikijs/rehype/core";
+import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import * as acorn from "acorn";
 import type { Code, Root } from "mdast";
 import type { MdxJsxAttribute, MdxJsxFlowElement } from "mdast-util-mdx-jsx";
@@ -12,8 +10,6 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import type { ShikiTransformer } from "shiki";
-import { createHighlighterCore } from "shiki/core";
-import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import { visit } from "unist-util-visit";
 import { VFile } from "vfile";
 import type { Plugin, Rollup } from "vite";
@@ -29,26 +25,11 @@ declare module "vfile" {
 export function markdownPlugin(): Plugin[] {
 	// https://github.com/mdx-js/mdx/blob/2b3381a8962dc888c0f2ed181cf80c6a1140b662/packages/rollup/lib/index.js
 	let processors: ReturnType<typeof createFormatAwareProcessors>;
-	let highlighter: Awaited<ReturnType<typeof createHighlighterCore>>;
 
 	return [
 		{
 			name: "rscpress:mdx",
 			async config() {
-				highlighter = await createHighlighterCore({
-					themes: [
-						import("@shikijs/themes/github-light"),
-						import("@shikijs/themes/github-dark"),
-					],
-					langs: [
-						// TODO: warning if used language is not loaded
-						import("@shikijs/langs/json"),
-						import("@shikijs/langs/javascript"),
-						import("@shikijs/langs/typescript"),
-						import("@shikijs/langs/shell"),
-					],
-					engine: createOnigurumaEngine(() => import("shiki/wasm")),
-				});
 				processors = createFormatAwareProcessors({
 					format: "mdx",
 					remarkPlugins: [
@@ -61,26 +42,22 @@ export function markdownPlugin(): Plugin[] {
 					rehypePlugins: [
 						// https://shiki.style/packages/rehype
 						[
-							rehypeShikiFromHighlighter,
-							highlighter,
+							rehypeShiki,
 							{
 								themes: {
 									light: "github-light",
 									dark: "github-dark",
 								},
+								langs: [],
+								lazy: true,
 								defaultColor: false,
 								addLanguageClass: true,
 								defaultLanguage: "text",
-								transformers: createRscpressTransformer(),
-							} satisfies RehypeShikiCoreOptions,
+								transformers: createRscpressShikiTransformer(),
+							} satisfies RehypeShikiOptions,
 						],
 					],
 				});
-			},
-			buildEnd() {
-				if (this.environment.mode === "dev") {
-					highlighter.dispose();
-				}
 			},
 			async transform(code, id) {
 				const { filename, query } = parseIdQuery(id);
@@ -312,16 +289,18 @@ function parseIdQuery(id: string): {
 }
 
 // https://shiki.style/guide/transformers
-function createRscpressTransformer(): ShikiTransformer[] {
+function createRscpressShikiTransformer(): ShikiTransformer[] {
 	return [
 		{
-			name: "vitepress:wrapper",
+			name: "rscpress",
 			pre(node) {
 				node.properties.dir = "ltr";
-				this.addClassToHast(node, "shiki");
-				this.addClassToHast(node, "shiki-themes");
-				this.addClassToHast(node, "github-light");
-				this.addClassToHast(node, "github-dark");
+				this.addClassToHast(node, [
+					"shiki",
+					"shiki-themes",
+					"github-light",
+					"github-dark",
+				]);
 			},
 			code(node) {
 				this.addClassToHast(node, "vp-code");
