@@ -7,10 +7,9 @@ import {
 } from "@iconify/utils";
 import { builtinIcons } from "./builtin.ts";
 
-// for now load them all
-export async function generateCss() {
+export async function generateCss(icons: Record<string, string>) {
 	let css = "";
-	for (const [label, icon] of Object.entries(builtinIcons)) {
+	for (const [label, icon] of Object.entries(icons)) {
 		const svg = encodeSvgForCss(await getSVG(icon));
 		css += `\
 [data-title='${label}']::before {

@@ -1,10 +1,10 @@
 import "./styles/index.css";
+import "virtual:rscpress:code-title-icon.css";
 import routeModules from "virtual:rscpress:routes";
 import { Client } from "./client";
 import { Home } from "./components/home";
 import { NotFound } from "./components/not-found";
 import { Layout } from "./layout";
-import { CodeTitleIconStyle } from "./plugins/code-title-icon/components";
 
 export async function getStaticPaths(): Promise<string[]> {
 	return Object.keys(routeModules);
@@ -47,7 +47,6 @@ export async function Root({ url }: { url: URL }) {
 				<link rel="icon" type="image/svg+xml" href="/vite.svg" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<title>Vite + RSC</title>
-				<CodeTitleIconStyle />
 			</head>
 			<body>
 				<Client />
