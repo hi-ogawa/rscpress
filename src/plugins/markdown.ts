@@ -330,75 +330,11 @@ function createRscpressTransformer(): ShikiTransformer[] {
 				const lang = this.options.lang;
 				const raw = this.options.meta?.__raw || "";
 				const title = getCodeTitle(raw) || "";
-
-				// div.vp-code-block-title
-				//   div.vp-code-block-title-bar
-				//     span.vp-code-block-title-text
-				//        {title}
-				//   div.language-<lang>
-				//     {...}
-
-				let codeBlock: import("hast").Element = {
-					type: "element",
-					tagName: "div",
-					properties: {
-						className: [
-							`language-${lang}`,
-							title.startsWith("code-group:") ? "code-group-block" : "",
-							title.startsWith("code-group:0:") ? "active" : "",
-						],
-					},
-					children: [
-						{
-							type: "element",
-							tagName: "button",
-							properties: {
-								className: ["copy"],
-							},
-						},
-						{
-							type: "element",
-							tagName: "span",
-							properties: {
-								className: ["lang"],
-							},
-							children: [{ type: "text", value: lang || "text" }],
-						},
-						...(node.children as any),
-					],
-				};
-
-				if (title && !title.startsWith("code-group:")) {
-					// TODO: title icon https://github.com/yuyinws/vitepress-plugin-group-icons
-					codeBlock = {
-						type: "element",
-						tagName: "div",
-						properties: {
-							className: ["vp-code-block-title"],
-						},
-						children: [
-							{
-								type: "element",
-								tagName: "div",
-								properties: {
-									className: ["vp-code-block-title-bar"],
-								},
-								children: [
-									{
-										type: "element",
-										tagName: "span",
-										properties: {
-											className: ["vp-code-block-title-text"],
-										},
-										children: [{ type: "text", value: title }],
-									},
-								],
-							},
-							codeBlock,
-						],
-					};
-				}
-
+				const codeBlock = hJsx(
+					"components.CodeBlock",
+					{ lang, title },
+					node.children,
+				);
 				node.children = [codeBlock] as any;
 			},
 		},
