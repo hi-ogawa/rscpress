@@ -1,5 +1,5 @@
 import React from "react";
-import { getCodeTitleIcon } from "./plugins/code-title-icon/utils";
+import { getCodeTitleIconLabel } from "./plugins/code-title-icon/runtime";
 
 export function CodeGroup(props: {
 	id: string;
@@ -20,7 +20,7 @@ export function CodeGroup(props: {
 						/>
 						<label
 							htmlFor={`group-${props.id}:${i}`}
-							data-title={getCodeTitleIcon(title)}
+							data-title={getCodeTitleIconLabel(title)}
 						>
 							{title}
 						</label>
@@ -80,7 +80,7 @@ export function CodeBlock(props: {
 				<div className="vp-code-block-title-bar">
 					<span
 						className="vp-code-block-title-text"
-						data-title={getCodeTitleIcon(title)}
+						data-title={getCodeTitleIconLabel(title)}
 					>
 						{title}
 					</span>

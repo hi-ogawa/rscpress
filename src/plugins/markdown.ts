@@ -13,6 +13,7 @@ import type { ShikiTransformer } from "shiki";
 import { visit } from "unist-util-visit";
 import { VFile } from "vfile";
 import type { Plugin, Rollup } from "vite";
+import { parseIdQuery } from "./utils";
 
 declare module "vfile" {
 	interface DataMap {
@@ -273,19 +274,6 @@ function getCodeTitle(s: string): string {
 		return match[1];
 	}
 	return "";
-}
-
-// https://github.com/vitejs/vite-plugin-vue/blob/06931b1ea2b9299267374cb8eb4db27c0626774a/packages/plugin-vue/src/utils/query.ts#L13
-function parseIdQuery(id: string): {
-	filename: string;
-	query: {
-		[k: string]: string;
-	};
-} {
-	if (!id.includes("?")) return { filename: id, query: {} };
-	const [filename, rawQuery] = id.split(`?`, 2) as [string, string];
-	const query = Object.fromEntries(new URLSearchParams(rawQuery));
-	return { filename, query };
 }
 
 // https://shiki.style/guide/transformers

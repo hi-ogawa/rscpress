@@ -7,6 +7,7 @@ import rsc, { type RscPluginOptions } from "@vitejs/plugin-rsc";
 import { type Connect, type Plugin, type ResolvedConfig } from "vite";
 import { RSC_POSTFIX } from "../framework/shared.ts";
 import type { SsgData } from "../types.ts";
+import { codeTitleIconPlugin } from "./code-title-icon/plugin.ts";
 import { markdownPlugin } from "./markdown.ts";
 
 export default function rscpress(): Plugin[] {
@@ -31,6 +32,7 @@ export default function rscpress(): Plugin[] {
 		},
 		...react(),
 		...rsc(rscPluginOptions),
+		...codeTitleIconPlugin(),
 		...markdownPlugin(),
 		createVirtualPlugin("rscpress:routes", async function () {
 			const globBase = "";
